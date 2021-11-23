@@ -10,6 +10,8 @@ import Favorite from '../Favorite/Favorite';
 import Repository from '../Repository/Repository';
 import Details from '../Search/Details';
 import AllFile from '../Search/AllFile';
+import Repositories from '../Repositories/Repositories';
+import Home from '../Home/Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,10 +41,13 @@ const FavorisScreen = () => {
 const RepositoryScreen = () => {
     return(
     <Stack.Navigator>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Repositories" component={Repositories} />
         <Stack.Screen name="Repository" component={Repository} />
-      </Stack.Navigator>
+    </Stack.Navigator>
     )
 }
+
 
 const Tab = createBottomTabNavigator();
 

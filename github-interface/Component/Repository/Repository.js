@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-export default function Repository() {
-    const [repoName, setRepoName] = useState("Repository");
+export default function Repository({route, navigation}) {
+    const data = route.params;
+
+    const [repoName, setRepoName] = useState(data.name);
     const [orgName, setOrgName] = useState("Organization");
     const [link, setLink] = useState("reactjs.org");
     const [stars, setStars] = useState("177k stars");
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     organizationText: {
-        color: '#99879D',
+        color: 'darkgray',
         fontStyle: "normal",
         fontSize: 20,
         lineHeight: 19,
@@ -159,13 +161,13 @@ const styles = StyleSheet.create({
     descriptionText: {
         marginVertical: 30,
         marginHorizontal: 20,
-        color: '#99879D',
+        color: 'darkgray',
         fontStyle: "normal",
         fontSize: 20,
         lineHeight: 30,
     },
     infos: {
-        color: '#99879D',
+        color: 'darkgray',
         fontSize: 20,
         marginLeft: 10
     }
