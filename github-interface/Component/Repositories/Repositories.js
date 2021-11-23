@@ -12,6 +12,10 @@ export default function Repositories({navigation}) {
             id:1,
             name: "Laravel Dashoard"
         },
+        {
+            id:2,
+            name: "Api"
+        },
     ]);
     
     return (
