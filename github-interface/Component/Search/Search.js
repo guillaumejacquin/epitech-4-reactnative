@@ -1,5 +1,6 @@
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { connect } from 'react-redux'
 import Card from '../../ComponentScreen/SearchComponent/Card/Card'
 import Input from '../../ComponentScreen/SearchComponent/Input/Input'
 
@@ -47,7 +48,7 @@ const DataIssues = [
         name: "Issues 2"
     }
 ]
-const Search = ({navigation}) => {
+const Search = ({navigation, octokit}) => {
     const nav= () => {
         navigation.navigate("Details")
     }
@@ -69,6 +70,10 @@ const Search = ({navigation}) => {
     )
 }
 
-export default Search
+// export default Search
 
 const styles = StyleSheet.create({})
+const mapStateToProps = state => state;
+
+const connectComponent = connect(mapStateToProps, undefined)
+export default connectComponent(Search)

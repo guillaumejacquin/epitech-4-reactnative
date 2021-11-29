@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { connect } from 'react-redux';
 import Card from './Card';
 
-export default function Home({navigation}) {
+function Home({navigation, octokit}) {
     
     
     return (
@@ -30,3 +31,8 @@ const styles = StyleSheet.create({
         padding: 20
     },
 })
+
+const mapStateToProps = state => state;
+
+const connectComponent = connect(mapStateToProps, undefined)
+export default connectComponent(Home)

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { View, Text, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -12,6 +12,8 @@ import Details from '../Search/Details';
 import AllFile from '../Search/AllFile';
 import Repositories from '../Repositories/Repositories';
 import Home from '../Home/Home';
+import { connect } from 'react-redux';
+import * as Types from '../../store/type'
 
 const Stack = createNativeStackNavigator();
 
@@ -51,7 +53,11 @@ const RepositoryScreen = () => {
 
 const Tab = createBottomTabNavigator();
 
-const Navigation = () => {
+const Navigation = ({updateAuthInformation, auth}) => {
+  useEffect(() => {
+    updateAuthInformation(auth)
+  }, [auth])
+
     return (
         <NavigationContainer>
       <Tab.Navigator screenOptions={({ route }) => ({
@@ -90,4 +96,12 @@ const Navigation = () => {
     )
 }
 
-export default Navigation
+// export default Navigation
+const mapStateToProps = state => state;
+const mapDispatchToProps = dispatch => ({
+    updateAuthInformation: (octokit) => dispatch({type: Types.AUTH_GITHUB, payload:{
+      octokit
+    }}),
+})
+const connectComponent = connect(mapStateToProps, mapDispatchToProps)
+export default connectComponent(Navigation)
