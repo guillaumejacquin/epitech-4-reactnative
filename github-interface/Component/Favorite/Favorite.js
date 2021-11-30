@@ -5,9 +5,22 @@ import { connect } from 'react-redux'
 const Favorite = ({octokit}) => {
     console.log(octokit);
     return (
-        <View>
-            <Text>Favorite</Text>
-        </View>
+        <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
+          <ScrollView>
+              <View style={{flexDirection: "column", marginVertical: 10}}>
+
+                    <Text style={styles.title}>
+                        Overview
+                    </Text>
+                    <Text style={styles.subTitle}>
+                        favorites doesn't have any public repositories yet
+                    </Text>
+                  <Card title={"Repositories"} navigation={navigation} navigate={"Repositories"}/>
+                  <Card title={"Projects"} navigation={navigation} navigate={"Issues"}/>
+                  <Card title={"Packages"} navigation={navigation} navigate={"PullRequests"}/>
+              </View>
+          </ScrollView>
+        </SafeAreaView>
     )
 }
 
@@ -18,3 +31,17 @@ const mapStateToProps = state => state;
 
 const connectComponent = connect(mapStateToProps, undefined)
 export default connectComponent(Favorite)
+const styles = StyleSheet.create({
+    title: {
+        fontSize: 30,
+        fontWeight: "700",
+        padding: 20
+    },
+    subTitle: {
+        fontSize: 20,
+        fontWeight: "700",
+        padding: 30
+    },
+})
+
+export default Favorite
