@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, ScrollView } from 'react-native'
 import { connect } from 'react-redux'
+import Card from "../Home/Card"
 
-const Favorite = ({octokit}) => {
+const Favorite = ({octokit, navigation}) => {
     console.log(octokit);
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
@@ -26,7 +27,6 @@ const Favorite = ({octokit}) => {
 
 // export default Favorite
 
-const styles = StyleSheet.create({})
 const mapStateToProps = state => state;
 
 const connectComponent = connect(mapStateToProps, undefined)
@@ -43,5 +43,3 @@ const styles = StyleSheet.create({
         padding: 30
     },
 })
-
-export default Favorite
