@@ -7,31 +7,13 @@ import { connect, Provider } from 'react-redux';
 import { store } from './store/store';
 
 function App() {
-  const [auth, setauth] = useState(undefined)
-  useEffect(() => {
-    auth_github().then(async res => {
-      // const {data} = await res.request("/user");
-      setauth(res);
-    })
-  }, [])
-
   return (
     <Provider store={store}>
-      <Navigation auth={auth}/>
+      <Navigation/>
     </Provider>
   );
 }
-
-
-// const mapStateToProps = state => state;
-// const mapDispatchToProps = dispatch => ({
-//     updateAuthInformation: (octokit) => dispatch({type: Types.AUTH_GITHUB, payload:{
-//       octokit
-//     }}),
-// })
-// const connectComponent = connect(mapStateToProps, mapDispatchToProps)
-// export default connectComponent(App)
-export default (App)
+export default App
 
 const styles = StyleSheet.create({
   container: {
