@@ -3,21 +3,17 @@ import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, Tou
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 
+const Organizations = ({navigation, octokit}) => {
+    const [organizations, setOrganizations] = useState([]);
 
-const Repositories = ({route, navigation, octokit}) => {
-    const data = route.params;
-
-    const [repositories, setRepositories] = useState([]);
-
-
-    const getRepos = async() => {
-        const {data} = await octokit.request('GET /user/repos')
+    const getOrgs = async() => {
+        const {data} = await octokit.request('GET /user/orgs')
         return data
     }
 
     useEffect(() => {
-        getRepos().then(repos => {
-            setRepositories(repos)
+        getOrgs().then(orgs => {
+            setOrganizations(orgs)
         })
     }, [octokit])
     
@@ -26,21 +22,18 @@ const Repositories = ({route, navigation, octokit}) => {
           <ScrollView>
               <View style={{flexDirection: "column", marginVertical: 15}}>
 
-                  {/* Repo list */}
-                  {repositories.map(repo => (
-                    <TouchableOpacity onPress={() => {navigation.navigate("Repository", {repo: repo})}}>
+                  {organizations.map(repo => (
+                    <TouchableOpacity onPress={() => {}}>
                         <View style={styles.statBar}>
                             <Text style={styles.cardTitle}>
-                                {repo.name}
+                                {repo.login}
                             </Text>
                             <View style={{alignItems: "center"}}>
                                 <Icon style={{marginRight: 20, marginLeft: 10}} name='arrow-right' />
                             </View>
                         </View>
-
                     </TouchableOpacity>
                   ))}
-                  
 
               </View>
           </ScrollView>
@@ -71,8 +64,7 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
 })
-
 const mapStateToProps = state => state;
 
 const connectComponent = connect(mapStateToProps, undefined)
-export default connectComponent(Repositories)
+export default connectComponent(Organizations)

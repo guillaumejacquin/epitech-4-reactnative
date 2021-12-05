@@ -8,9 +8,12 @@ import Search from '../Search/Search';
 import User from '../User/User';
 import Favorite from '../Favorite/Favorite';
 import Repository from '../Repository/Repository';
+import RepositoryBrowser from '../RepositoryBrowser/RepositoryBrowser';
 import Details from '../Search/Details';
 import AllFile from '../Search/AllFile';
 import Repositories from '../Repositories/Repositories';
+import FileViewer from '../FileViewer/FileViewer';
+import Organizations from '../Organizations/Organizations';
 import Home from '../Home/Home';
 import { connect } from 'react-redux';
 import * as Types from '../../store/type'
@@ -45,8 +48,11 @@ const RepositoryScreen = () => {
     return(
     <Stack.Navigator>
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Organizations" component={Organizations} />
         <Stack.Screen name="Repositories" component={Repositories} />
         <Stack.Screen name="Repository" component={Repository} />
+        <Stack.Screen name="Repository browser" component={RepositoryBrowser} />
+        <Stack.Screen name="FileViewer" component={FileViewer} />
     </Stack.Navigator>
     )
 }
