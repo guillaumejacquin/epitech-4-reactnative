@@ -6,6 +6,7 @@ const User = ({octokit}) => {
     const [user, setuser] = useState(undefined)
     const getData = async() => {
         const {data} = await octokit.request("/user");
+
         return data
     }
     useEffect(() => {

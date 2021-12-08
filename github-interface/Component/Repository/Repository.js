@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { connect } from 'react-redux'
+import { Buffer } from 'buffer';
 
-export default function Repository({route, navigation}) {
-    const data = route.params;
 
-    const [repoName, setRepoName] = useState(data.name);
-    const [orgName, setOrgName] = useState("Organization");
-    const [link, setLink] = useState("reactjs.org");
-    const [stars, setStars] = useState("177k stars");
-    const [forks, setForks] = useState("35.8k forks");
+const Repository = ({route, navigation, octokit}) => {
+    const repo = route.params.repo;
+
+    const [repoName, setRepoName] = useState(repo.name);
+    const [orgName, setOrgName] = useState("org");
+    const [link, setLink] = useState("todo");
+    const [stars, setStars] = useState(repo.stargazers_count);
+    const [forks, setForks] = useState(repo.forks_count);
     const [numberOfLines, setNumberOfLines] = useState(5);
-    const [watchers, setWatchers] = useState(26);
-    const [repositories, setRepositories] = useState(null);
-    const [starred, setStarred] = useState(null);
-    const [readme, setReadme] = useState("README \n\nNunc nulla. Suspendisse non nisl sit amet velit hendrerit rutrum. Praesent turpis. \n\nCras dapibus. Pellentesque ut neque. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.\n\nSed lectus. In ut quam vitae odio lacinia tincidunt. Etiam ut purus mattis mauris sodales aliquam.");
-    const [contributors, setContributors] = useState(12);
-    const [imageUrl, setImageUrl] = useState("https://alrigh.com/wp-content/uploads/2020/06/19-tom-profile-picture.jpg");
-    const [description, setDescription] = useState("A declarative, efficient, and flexible JavaScript library for building user interfaces\n\nMaecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.\n\nSed lectus. In ut quam vitae odio lacinia tincidunt. Etiam ut purus mattis mauris sodales aliquam.");
+    const [watchers, setWatchers] = useState(repo.watchers_count);
+    // const [repositories, setRepositories] = useState(null);
+    const [starred, setStarred] = useState("todo");
+    const [readme, setReadme] = useState("");
+    const [contributors, setContributors] = useState(0);
+    const [imageUrl, setImageUrl] = useState("");
+    const [description, setDescription] = useState(repo.description);
+    
+
+    useEffect(() => {
+
+        // Get num contributors
+        octokit.request('GET /repos/{owner}/{repo}/stats/contributors', {
+            owner: repo.owner.login,
+            repo: repo.name
+          }).then(res => { setContributors(res.data?.length ? res.data.length : 0) })
+
+        // Get the readme; Todo: decode base64
+        octokit.request('GET /repos/{owner}/{repo}/readme', {
+            owner: repo.owner.login,
+            repo: repo.name
+          }).then(res => {
+            setReadme(res.data.content ? Buffer.from(res.data.content, 'base64').toString('ascii') : '')}).catch(err => {setReadme("")})
+        // Get Profile image
+        octokit.request('GET /user').then(res => {setImageUrl(res.data.avatar_url)})
+    }, [octokit])
+
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
@@ -69,18 +92,17 @@ export default function Repository({route, navigation}) {
                   </View>
 
                   {/* Stats */}
-                  <View style={{marginVertical: 20}}>    
-                    <View style={styles.statBar}>
-                        <Text style={styles.title}>
-                            Repositories
-                        </Text>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                  <View style={{marginVertical: 20}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate("Repository browser", {repo: repo})}}>
+                        <View style={styles.statBar}>
                             <Text style={styles.title}>
-                                {repositories}
+                                Repository
                             </Text>
-                            <Icon style={{marginRight: 20, marginLeft: 10}} name='folder' />
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Icon style={{marginRight: 20, marginLeft: 10}} name='folder' />
+                            </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.statBar}>
                         <Text style={styles.title}>
                             Starred
@@ -172,3 +194,8 @@ const styles = StyleSheet.create({
         marginLeft: 10
     }
 })
+
+const mapStateToProps = state => state;
+
+const connectComponent = connect(mapStateToProps, undefined)
+export default connectComponent(Repository)
