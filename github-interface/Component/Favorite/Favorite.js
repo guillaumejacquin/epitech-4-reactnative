@@ -1,10 +1,23 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+
 import { StyleSheet, Text, View, SafeAreaView, ScrollView } from 'react-native'
 import { connect } from 'react-redux'
 import Card from "../Home/Card"
 
 const Favorite = ({octokit, navigation}) => {
-    console.log(octokit);
+    console.log("OCTOKIT OCTOKIT", octokit);
+    const [favorites, setFavorites] = useState(undefined)
+    const getData = async() => {
+        const {data} = await octokit.request("/");
+        //console.log(data)
+        return data
+    }
+    useEffect(() => {
+        getData().then(res => {
+            setFavorites(res);
+        })
+    }, [octokit])
+
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
@@ -25,12 +38,11 @@ const Favorite = ({octokit, navigation}) => {
     )
 }
 
-// export default Favorite
-
 const mapStateToProps = state => state;
-
 const connectComponent = connect(mapStateToProps, undefined)
+
 export default connectComponent(Favorite)
+
 const styles = StyleSheet.create({
     title: {
         fontSize: 30,
