@@ -3,25 +3,33 @@ import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native
 import CardCells from './CardCells'
 
 const Card = ({title, data, nav, navAllFile}) => {
-    return (
-        <View style={styles.table}>
-            <Text style={styles.titleCard}>{title}</Text>
-            <View style={{marginTop:10}}>
-                {data.slice(0,3).map(item => (
-                    <CardCells key={item.id} item={item} nav={nav}/>
-                ))}
-                {/* <FlatList 
-                data={data}
-                keyExtractor={(item) => {item.id.toString()}}
-                renderItem = {({item}) => <CardCells item={item} nav={nav}/>}
-                scrollEnabled={true}
-                /> */}
+    if(data)
+        return (
+            <View style={styles.table}>
+                <Text style={styles.titleCard}>{title}</Text>
+                <View style={{marginTop:10}}>
+                    {data.slice(0,3).map(item => (
+                        <CardCells key={item.id} item={item} nav={nav} theme={title}/>
+                    ))}
+                    {/* <FlatList 
+                    data={data}
+                    keyExtractor={(item) => {item.id.toString()}}
+                    renderItem = {({item}) => <CardCells item={item} nav={nav}/>}
+                    scrollEnabled={true}
+                    /> */}
+                </View>
+                <TouchableOpacity style={styles.more} onPress={() => navAllFile(data)}>
+                    <Text style={styles.titleMore}>See more ...</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.more} onPress={() => navAllFile(data)}>
-                <Text style={styles.titleMore}>See more ...</Text>
-            </TouchableOpacity>
-        </View>
-    )
+        )
+        else{
+            return(
+                <View style={{flex:1, alignItems:"center", justifyContent:"center"}}>
+                    <Text>Chargement...</Text>
+                </View>
+            )
+        }
 }
 
 export default Card

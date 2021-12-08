@@ -1,10 +1,10 @@
 import React from 'react'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
-const Input = () => {
+const Input = ({value, changeInput}) => {
     return (
         <View>
-            <TextInput placeholder="Search" style={styles.inputSearch}/>
+            <TextInput placeholder="Search" style={styles.inputSearch} onChangeText ={(text) => changeInput(text)} value={value}/>
         </View>
     )
 }

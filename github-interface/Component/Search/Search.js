@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import Card from '../../ComponentScreen/SearchComponent/Card/Card'
@@ -49,6 +49,10 @@ const DataIssues = [
     }
 ]
 const Search = ({navigation, octokit}) => {
+    const [input, setInput] = useState(undefined)
+    const [user, setuser] = useState(undefined)
+    const [repositories, setrepositories] = useState(undefined)
+    const [issues, setissues] = useState([])
     const nav= () => {
         navigation.navigate("Details")
     }
@@ -56,18 +60,63 @@ const Search = ({navigation, octokit}) => {
     const navAllFile= (data) => {
         navigation.navigate("AllFile", {data})
     }
-    return (
-        <ScrollView>
-            <View>
-                <Input />
-            </View>
-            <View>
-                <Card title={"Repositories"} data={DataRepositories} nav={nav} navAllFile={navAllFile}/>
-                <Card title={"Users"} data={DataUser} nav={nav} navAllFile={navAllFile}/>
-                <Card title={"Issues"} data={DataIssues} nav={nav} navAllFile={navAllFile}/>
-            </View>
-        </ScrollView>
-    )
+
+    const search_user = () => {
+            octokit.rest.search.users({
+                q: input,
+            }).then(res =>{
+                setuser(res.data.items);
+                // console.log(res.data.items);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+
+    const search_repo = () => {
+        octokit.rest.search.repos({
+            q:input,
+        }).then(res =>{
+            console.log(res.data.items);
+            setrepositories(res.data.items);
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+
+    const search_issues = () => {
+        octokit.rest.search.issuesAndPullRequests({
+            q:input,
+        }).then(res =>{
+            setissues(res.data.items)
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+
+    useEffect(() => {
+      search_user()
+      search_repo()
+      search_issues()
+    }, [input])
+
+        return (
+            <ScrollView>
+                <View>
+                    <Input value={input} changeInput={setInput}/>
+                </View>
+                {
+                    input ? 
+                    <View>
+                        <Card title={"Repositories"} data={repositories} nav={nav} navAllFile={navAllFile}/>
+                        <Card title={"Users"} data={user} nav={nav} navAllFile={navAllFile}/>
+                        <Card title={"Issues"} data={issues} nav={nav} navAllFile={navAllFile}/>
+                    </View> :  <View style={{alignItems:"center", justifyContent:"center", flex:1}}>
+                        <Text>Veuillez éffectuer une recherche ...</Text>
+                    </View>
+                }
+            </ScrollView>
+        )
 }
 
 // export default Search
