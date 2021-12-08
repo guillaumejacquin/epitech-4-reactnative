@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import CardCells from '../../ComponentScreen/SearchComponent/Card/CardCells';
 
 const AllFile = ({route, navigation}) => {
@@ -8,12 +8,11 @@ const AllFile = ({route, navigation}) => {
         navigation.navigate("Details")
     }
     return (
-        <View style={{margin:20}}>
-            {Object.values(data).map(res => (       
-                // <Text>{res.name}</Text>
+        <ScrollView>
+            {data.map(res => (       
                 <CardCells item={res} key={res.id} nav={nav} />
                 ))}
-        </View>
+        </ScrollView>
     )
 }
 

@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import Card from "../Home/Card"
 
 const Favorite = ({octokit, navigation}) => {
-    console.log(octokit);
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
