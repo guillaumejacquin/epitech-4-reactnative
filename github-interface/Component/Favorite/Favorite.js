@@ -5,9 +5,9 @@ import Card from "../Home/Card"
 
 const Favorite = ({octokit, navigation}) => {
     console.log("OCTOKIT OCTOKIT", octokit);
-    const [favorites, setFavorites] = useState(undefined)
+    const [user, setFavorites] = useState([])
     const getData = async() => {
-        const {data} = await octokit.request("/");
+        const {data} = await octokit.request("GET /user");
         //console.log(data)
         return data
     }
@@ -16,7 +16,17 @@ const Favorite = ({octokit, navigation}) => {
             setFavorites(res);
         })
     }, [octokit])
-
+    const favoritesExists = () => {
+        if (user.Favorite) { 
+           return <Text style={styles.subTitle}>
+                {user.Favorite}
+            </Text>
+        } else {
+            return <Text style={styles.subTitle}>
+            favorites doesn't have any public repositories yet
+        </Text>
+        }
+    }
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
@@ -25,9 +35,7 @@ const Favorite = ({octokit, navigation}) => {
                     <Text style={styles.title}>
                         Overview
                     </Text>
-                    <Text style={styles.subTitle}>
-                        favorites doesn't have any public repositories yet
-                    </Text>
+                    {favoritesExists()}
                   <Card title={"Repositories"} navigation={navigation} navigate={"Repositories"}/>
                   <Card title={"Projects"} navigation={navigation} navigate={"Issues"}/>
                   <Card title={"Packages"} navigation={navigation} navigate={"PullRequests"}/>
