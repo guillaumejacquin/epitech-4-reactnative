@@ -1,0 +1,19 @@
+body{
+    font-family: Georgia;
+    font-size: 11pt;
+}
+ 
+h2{
+    text-align: center;
+}
+ 
+#global{
+  width:100%;
+}
+#global #gauche {
+    float:left;
+    width:60%;
+}
+#global #droite {
+    margin-left:60%  
+}
