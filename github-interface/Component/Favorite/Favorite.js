@@ -4,11 +4,9 @@ import { connect } from 'react-redux'
 import Card from "../Home/Card"
 
 const Favorite = ({octokit, navigation}) => {
-    console.log("OCTOKIT OCTOKIT", octokit);
     const [user, setFavorites] = useState([])
     const getData = async() => {
-        const {data} = await octokit.request("GET /user");
-        //console.log(data)
+        const {data} = await octokit.request("GET /user/repos");
         return data
     }
     useEffect(() => {
@@ -17,13 +15,14 @@ const Favorite = ({octokit, navigation}) => {
         })
     }, [octokit])
     const favoritesExists = () => {
-        if (user.Favorite) { 
+        console.log("teeeeeeeeeeeeest")
+        if (user) { 
            return <Text style={styles.subTitle}>
-                {user.Favorite}
+                {user.login}
             </Text>
         } else {
             return <Text style={styles.subTitle}>
-            favorites doesn't have any public repositories yet
+            REPOSITORIES
         </Text>
         }
     }
