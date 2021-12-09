@@ -28,7 +28,7 @@ const Repositories = ({route, navigation, octokit}) => {
 
                   {/* Repo list */}
                   {repositories.map(repo => (
-                    <TouchableOpacity onPress={() => {navigation.navigate("Repository", {repo: repo})}}>
+                    <TouchableOpacity key={repo.name} onPress={() => {navigation.navigate("Repository", {repo: repo})}}>
                         <View style={styles.statBar}>
                             <Text style={styles.cardTitle}>
                                 {repo.name}

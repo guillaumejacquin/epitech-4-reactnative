@@ -4,14 +4,16 @@ import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 
 const RepositoryBrowser = ({route, navigation, octokit}) => {
-    const repo = route.params.repo;
-
-    const [repoName, setRepoName] = useState(repo.name);
+    const [repo, setRepo] = useState(route.params.repo);
+    const [branch, setBranch] = useState("master");
+    const [branches, setBranches] = useState([]);
     const [path, setPath] = useState("");
     const [files, setFiles] = useState([]);
 
     useEffect(() => {
       getFiles("")
+      getAllBranches()
+      getBranch(branch)
     }, [])
 
     const getFiles = async (p) => {
@@ -23,6 +25,27 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
         setFiles(res.data)
       })
 
+    }
+
+    const getAllBranches = async () => {
+      await octokit.request('GET /repos/{owner}/{repo}/branches', {
+        owner: repo.owner.login,
+        repo: repo.name,
+      }).then(res => {
+        setBranches(res.data)
+      })
+    }
+
+    const getBranch = async (branch) => {
+      await octokit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
+        owner: repo.owner.login,
+        repo: repo.name,
+        branch: branch
+      }).then(res => {
+        console.log(res.data)
+        setBranches(res.data)
+        setBranch(branch)
+      })
     }
 
     const navigateDir = async (dir) => {
@@ -43,10 +66,6 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
     }
     
     const openFile = (file) => {
-
-
-     
-
       octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner: repo.owner.login,
         repo: repo.name,
