@@ -49,7 +49,7 @@ const Repository = ({route, navigation, octokit}) => {
 
                     {/* Head: Image, repo & organization names */}
                   <View style={{flexDirection: "row", marginLeft: 30}}>
-                    {imageUrl ? 
+                    { imageUrl ? 
                         <Image source={{uri: imageUrl}} style={{width: 72.53, height: 72.53, borderRadius: 72.53/ 2}} />
                     : null }
 
