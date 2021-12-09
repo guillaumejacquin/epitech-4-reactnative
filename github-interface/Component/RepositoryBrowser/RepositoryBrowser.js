@@ -37,16 +37,6 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
       })
     }
 
-    const getCommits = async (branch) => {
-      await octokit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
-        owner: repo.owner.login,
-        repo: repo.name,
-        branch: branch
-      }).then(res => {
-        setCommits(res.data)
-      })
-    }
-
     const navigateDir = async (dir) => {
       const newPath = path + (path ? "/" : '') + dir
       getFiles(newPath, branch)
