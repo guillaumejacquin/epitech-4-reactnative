@@ -49,8 +49,9 @@ const Repository = ({route, navigation, octokit}) => {
 
                     {/* Head: Image, repo & organization names */}
                   <View style={{flexDirection: "row", marginLeft: 30}}>
-
-                    <Image source={{uri: imageUrl}} style={{width: 72.53, height: 72.53, borderRadius: 72.53/ 2}} />
+                    {imageUrl ? 
+                        <Image source={{uri: imageUrl}} style={{width: 72.53, height: 72.53, borderRadius: 72.53/ 2}} />
+                    : null }
 
                     <View style={{flexDirection: "column", marginLeft: 10, justifyContent: "space-around"}}>
                         <Text style={styles.repositoryText}>{repoName}</Text>
