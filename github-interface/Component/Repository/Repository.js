@@ -104,6 +104,16 @@ const Repository = ({route, navigation, octokit}) => {
                             </View>
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {navigation.navigate("Pull requests", {repo: repo})}}>
+                        <View style={styles.statBar}>
+                            <Text style={styles.title}>
+                                Pull request
+                            </Text>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Icon style={{marginRight: 20, marginLeft: 10}} name='folder' />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
                     <View style={styles.statBar}>
                         <Text style={styles.title}>
                             Starred
