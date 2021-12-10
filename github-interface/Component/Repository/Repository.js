@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity, Button, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 import { Buffer } from 'buffer';
+
 
 
 const Repository = ({route, navigation, octokit}) => {
@@ -22,6 +23,26 @@ const Repository = ({route, navigation, octokit}) => {
     const [imageUrl, setImageUrl] = useState("");
     const [description, setDescription] = useState(repo.description);
     
+    const showConfirmDialog = () => {
+        return Alert.alert(
+          "Are your sure?",
+          `Are you sure you want to remove ${repo.name}?`,
+          [
+            // The "Yes" button
+            {
+              text: "Yes",
+              onPress: () => {
+                deleteRepo();
+              },
+            },
+            // The "No" button
+            // Does nothing but dismiss the dialog when tapped
+            {
+              text: "No",
+            },
+          ]
+        );
+      };
 
     useEffect(() => {
 
@@ -41,6 +62,15 @@ const Repository = ({route, navigation, octokit}) => {
         octokit.request('GET /user').then(res => {setImageUrl(res.data.avatar_url)})
     }, [octokit])
 
+    const deleteRepo = () =>{
+        octokit.rest.repos.delete({
+            owner:repo.owner.login,
+            repo: repo.name,
+          }).then(res => {
+              navigation.goBack()
+              console.log(res);
+          });
+    }
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
@@ -143,6 +173,7 @@ const Repository = ({route, navigation, octokit}) => {
                     {readme}
                   </Text>
               </View>
+              <Button title="delete" onPress={showConfirmDialog} />
           </ScrollView>
         </SafeAreaView>
     )
