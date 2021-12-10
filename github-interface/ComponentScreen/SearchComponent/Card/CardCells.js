@@ -1,10 +1,22 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-const CardCells = ({item, nav}) => {
+const CardCells = ({item, nav, theme}) => {
+    const themes = () => {
+        if(theme === "Repositories"){
+            return <Text>{item.full_name}</Text>
+        }
+        else if(theme === "Users"){
+            return <Text>{item.login}</Text>
+        }
+        else {
+            return <Text>{item.id}</Text>
+        }
+    }
     return (
         <View style={styles.cells}>
-            <Text>{item.name}</Text>
+            {themes()}
+            {/* <Text>{item.login}</Text> */}
             <TouchableOpacity onPress={()=>nav()}>
                 <Text>{">"}</Text>
             </TouchableOpacity>
