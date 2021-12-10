@@ -5,19 +5,80 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
+
+
 const User = ({octokit}) => {
     const [user, setuser] = useState(undefined)
     const [modalOpen, setModalOpen] = useState(false);
-
+    const [modalselector, setModalSelector] = useState(null);
+    const [followers,  setFollowers ] = useState([])
+    const [followings, setFollowings] = useState([])
     const [repo, setRepo] = useState(0)
+
+
+    const openmodal = (modal) => {
+      setModalSelector(modal)
+      setModalOpen(true)
+    }
+    
+    const myMap = () => {
+
+      return (followers.map((followers) =>{
+        console.log(followers.login)
+        return (
+          <view>
+        <h1>
+        {followers.login}
+        </h1>
+          </view>  
+        );
+      }));
+    }
+
+
+
+    const myMapFollowing = () => {
+
+      return (followings.map((followings) =>{
+        console.log(followings.login)
+        return (
+          <view>
+        <h1>
+        {followings.login}
+        </h1>
+          </view>  
+        );
+      }));
+    }
     const getData = async() => {
         const {data} = await octokit.request("/user");
+        console.log(data.login)
+
+       const myfollowers = await octokit.request('GET /users/{username}/followers', {
+        username: data.login
+      })
+     // .login
+      setFollowers(myfollowers.data)
+
+
+      const myfollowings = await octokit.request('GET /users/{username}/following', {
+        username: data.login
+      })
+      setFollowings(myfollowings.data)
+      console.log(myfollowings)
+
+
+      const getUserStarred = (octokit) => octokit.request('GET /user/starred');
+      octokit.request('GET /user/starred')
+
+      console.log(getUserStarred)
+
+
         const privater = data.owned_private_repos
         const publicc = data.public_repos
 
         setRepo(data.owned_private_repos + data.public_repos)
-        
-
+      
         return data
     }
     useEffect(() => {
@@ -29,54 +90,82 @@ const User = ({octokit}) => {
     if(user)
         return (
             <View>
+              {console.log(user)}
               <Modal visible={modalOpen} animationType='slide'>
+                {modalselector == "followers"?
                 <View>
-                  <MaterialIcons
-                  name='close'
-                  style={styles.modalToggle}
-                  size={24}
-                  onPress={() => setModalOpen(false)}
-                  />
-                  <Text>
-                    hello
+                <MaterialIcons
+                name='close'
+                style={styles.modalToggle}
+                size={24}
+                onPress={() => setModalOpen(false)}
+                />
+                <Text style={{textAlign:"center"}}>
+                  Followers
                   </Text>
-                </View>
+                <Text>
+                  {myMap()}
+
+                </Text>
+                
+              </View>: null }
+
+              {modalselector == "followings"?
+                <View>
+                <MaterialIcons
+                name='close'
+                style={styles.modalToggle}
+                size={24}
+                onPress={() => setModalOpen(false)}
+                />
+                <Text style={{textAlign:"center"}}>
+                  Followings
+                  </Text>
+                <Text>
+                  {myMapFollowing()}
+
+                </Text>
+                
+              </View>: null }
                  </Modal>
+
+
+
+                 
               <View>
                 <View style={{flexDirection:"row", left:"50%", marginTop:30}}> 
-
               <Image style={{width:50, height:50}}source={{uri: user.avatar_url}} />
-
               <Text style={styles.nametitle}> {user.login}</Text>
 
               </View>
-              { user.twitter_username ? <Text style={styles.twitter}>  {user.twitter_username} </Text> : <Text style={styles.twitter}>  </Text> }
+              { user.twitter_username ? <Text style={styles.twitter}>  {user.twitter_username} </Text> : <Text style={styles.twitter}>  Notwitter </Text> }
+              { user.name ? <Text style={styles.twitter}>  {user.name} </Text> : <Text style={styles.twitter}>  no name provided </Text> }
+ 
+              { user.company ? <Text style={styles.twitter}>  {user.company} </Text> : <Text style={styles.twitter}>  no company provided </Text> }
 
-    
+              { user.email ? <Text style={styles.twitter}>  {user.email} </Text> : <Text style={styles.twitter}>  no email provided </Text> }
+              { user.blog ? <Text style={styles.twitter}>  {user.blog} </Text> : <Text style={styles.twitter}>  no blog </Text> }
+              { user.bio ? <Text style={styles.twitter}>  {user.bio} </Text> : <Text style={styles.twitter}>  no bio </Text> }
+
+
+
               </View>
-           
-
-          
+              <View>
+              </View>
       <View>
-     <TouchableOpacity onPress={() => setModalOpen(true)}
-
+     <TouchableOpacity onPress={() => openmodal("followers")}
         style={styles.button}>
 
                 <Text style={styles.textbutton}>Followers {user.followers}</Text>
                 {/* onPress={() => console.log("ahhuhu")} */}
       </TouchableOpacity>
       </View>
-          {console.log(user)}
       <View>
-        
-
-      <TouchableOpacity
+      <TouchableOpacity onPress={() => openmodal("followings")}
         style={styles.button}>
                 <Text style={styles.textbutton}>Followings {user.following}</Text>
-
       </TouchableOpacity> 
       </View>
-
       <View>
       <TouchableOpacity
         style={styles.button}>
@@ -88,17 +177,11 @@ const User = ({octokit}) => {
       <TouchableOpacity
         style={styles.button}>
                 <Text style={styles.textbutton}>Stared</Text>
-
       </TouchableOpacity>
           
       </View>
-
-
       </View>
         )
-
-    
-
     else{
         return (
             <View>
