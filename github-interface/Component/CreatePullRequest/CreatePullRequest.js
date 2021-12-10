@@ -35,6 +35,7 @@ const CreatePullRequest = ({route, navigation, octokit}) => {
         setHead(h)
         setSelectHead(false)
     }
+    
 
     const setBaseRefresh = (b) => {
         setBase(b)
