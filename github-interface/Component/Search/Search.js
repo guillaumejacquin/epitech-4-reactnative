@@ -53,8 +53,8 @@ const Search = ({navigation, octokit}) => {
     const [user, setuser] = useState(undefined)
     const [repositories, setrepositories] = useState(undefined)
     const [issues, setissues] = useState([])
-    const nav= () => {
-        navigation.navigate("Details")
+    const nav= (data) => {
+        navigation.navigate("Details", {data})
     }
     
     const navAllFile= (data) => {
@@ -77,7 +77,6 @@ const Search = ({navigation, octokit}) => {
         octokit.rest.search.repos({
             q:input,
         }).then(res =>{
-            console.log(res.data.items);
             setrepositories(res.data.items);
         }).catch(e => {
             console.log(e);

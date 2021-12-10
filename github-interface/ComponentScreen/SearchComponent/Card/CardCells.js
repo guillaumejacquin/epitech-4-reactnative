@@ -17,7 +17,7 @@ const CardCells = ({item, nav, theme}) => {
         <View style={styles.cells}>
             {themes()}
             {/* <Text>{item.login}</Text> */}
-            <TouchableOpacity onPress={()=>nav()}>
+            <TouchableOpacity onPress={()=>nav(item)}>
                 <Text>{">"}</Text>
             </TouchableOpacity>
         </View>
