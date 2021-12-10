@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import Card from './Card';
 
 function Home({navigation, octokit}) {
-    
-    
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>

@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, CheckBox, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -14,45 +14,19 @@ const User = ({octokit}) => {
     const [followers,  setFollowers ] = useState([])
     const [followings, setFollowings] = useState([])
     const [repo, setRepo] = useState(0)
-
+    const [isSelected, setSelection] = useState(false);
 
     const openmodal = (modal) => {
       setModalSelector(modal)
       setModalOpen(true)
     }
     
-    const myMap = () => {
-
-      return (followers.map((followers) =>{
-        console.log(followers.login)
-        return (
-          <view>
-        <h1>
-        {followers.login}
-        </h1>
-          </view>  
-        );
-      }));
-    }
+    
 
 
-
-    const myMapFollowing = () => {
-
-      return (followings.map((followings) =>{
-        console.log(followings.login)
-        return (
-          <view>
-        <h1>
-        {followings.login}
-        </h1>
-          </view>  
-        );
-      }));
-    }
     const getData = async() => {
         const {data} = await octokit.request("/user");
-        console.log(data.login)
+        // console.log(data.login)
 
        const myfollowers = await octokit.request('GET /users/{username}/followers', {
         username: data.login
@@ -65,13 +39,12 @@ const User = ({octokit}) => {
         username: data.login
       })
       setFollowings(myfollowings.data)
-      console.log(myfollowings)
 
 
       const getUserStarred = (octokit) => octokit.request('GET /user/starred');
       octokit.request('GET /user/starred')
 
-      console.log(getUserStarred)
+      // console.log(getUserStarred)
 
 
         const privater = data.owned_private_repos
@@ -90,7 +63,7 @@ const User = ({octokit}) => {
     if(user)
         return (
             <View>
-              {console.log(user)}
+              {/* {console.log(user)} */}
               <Modal visible={modalOpen} animationType='slide'>
                 {modalselector == "followers"?
                 <View>
@@ -102,11 +75,29 @@ const User = ({octokit}) => {
                 />
                 <Text style={{textAlign:"center"}}>
                   Followers
-                  </Text>
-                <Text>
-                  {myMap()}
+                  {/* {Mymap()} */}
 
-                </Text>
+                
+                  {followers.map((followers) =>{
+                    return(
+                     <Text>
+                     {console.log(followers.login)}
+                   {followers.login}
+           
+                   </Text>)
+           
+                  })}
+
+
+
+
+
+
+
+                  </Text>
+                {/* <Text>
+
+                </Text> */}
                 
               </View>: null }
 
@@ -122,7 +113,18 @@ const User = ({octokit}) => {
                   Followings
                   </Text>
                 <Text>
-                  {myMapFollowing()}
+                  {console.log(followings)}
+                  {followings.map((followings) =>{
+                    return(
+                     <Text>
+                     {console.log(followings.login)}
+                   {followings.login}
+           
+                   </Text>)
+           
+                  })}
+
+                  
 
                 </Text>
                 
@@ -133,12 +135,16 @@ const User = ({octokit}) => {
 
                  
               <View>
-                <View style={{flexDirection:"row", left:"50%", marginTop:30}}> 
-              <Image style={{width:50, height:50}}source={{uri: user.avatar_url}} />
+                <View style={{flexDirection:"row", left:"40%", marginTop:30}}> 
+              <Image style={{width:80, height:80}}source={{uri: user.avatar_url}} />
               <Text style={styles.nametitle}> {user.login}</Text>
 
               </View>
-              { user.twitter_username ? <Text style={styles.twitter}>  {user.twitter_username} </Text> : <Text style={styles.twitter}>  Notwitter </Text> }
+              { user.twitter_username ? <Text style={styles.twitter}>  @{user.twitter_username} </Text> : <Text style={styles.twitter}>  @notdefined   </Text> }
+
+
+              </View>
+              <View style ={{ width:"30%", backgroundColor:"grey", borderRadius:20}}>
               { user.name ? <Text style={styles.twitter}>  {user.name} </Text> : <Text style={styles.twitter}>  no name provided </Text> }
  
               { user.company ? <Text style={styles.twitter}>  {user.company} </Text> : <Text style={styles.twitter}>  no company provided </Text> }
@@ -146,10 +152,9 @@ const User = ({octokit}) => {
               { user.email ? <Text style={styles.twitter}>  {user.email} </Text> : <Text style={styles.twitter}>  no email provided </Text> }
               { user.blog ? <Text style={styles.twitter}>  {user.blog} </Text> : <Text style={styles.twitter}>  no blog </Text> }
               { user.bio ? <Text style={styles.twitter}>  {user.bio} </Text> : <Text style={styles.twitter}>  no bio </Text> }
-
-
-
               </View>
+
+
               <View>
               </View>
       <View>
@@ -211,6 +216,7 @@ const styles = StyleSheet.create({
     },
     twitter: {
       textAlign:'center',
+      textAlignVertical:'center',
         },
     picture_profil: {
       width: 72.53,
