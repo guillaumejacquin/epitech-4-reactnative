@@ -6,31 +6,34 @@ import { Button } from 'react-native-elements';
 import { Icon } from 'react-native-elements';
 
 export const countFavorites = async(length) => {
-        return length
-}
-
-const getData = async(octokit) => {
-    const { data } = await octokit.request("GET /user/starred");
-    return data
-}
-
-const deleteData = async(favorite, octokit) => {
-    octokit.rest.activity.unstarRepoForAuthenticatedUser({
-        owner: favorite.owner.login,
-        repo: favorite.name,
-    }).then(res => {
-        console.log(res);
-    });
+    return length
 }
 
 const Favorite = ({octokit, navigation}) => {
-    const [favorites, setFavorites] = useState([{}])
+    const [favorites, setFavorites] = useState([])
 
     useEffect(() => {
-        getData(octokit).then(res => {
-            setFavorites(res);
-        });
+        getData()
     }, [octokit])
+
+    const getData = async() => {
+        await octokit.request("GET /user/starred")
+        .then(res => {
+            setFavorites(res.data);
+        }).catch(error =>
+            console.log("An error occured :", error)
+        )
+    }
+
+    const deleteData = async(favorite) => {
+        //TODO: catch
+        octokit.rest.activity.unstarRepoForAuthenticatedUser({
+            owner: favorite.owner.login,
+            repo: favorite.name,
+        }).then(res => {
+            console.log(res);
+        });
+    }
 
     countFavorites(favorites.length);
 
@@ -41,8 +44,8 @@ const Favorite = ({octokit, navigation}) => {
                     <Text style={styles.title}>
                         <Icon name='star' /> Favoris
                     </Text>
-                    {favorites.map(favorite => (
-                        <TouchableOpacity onPress={() => console.log("lol")}>
+                    {favorites.map((favorite, index) => (
+                        <TouchableOpacity onPress={() => {navigation.navigate("Repository", {repo: favorite})}}>
                                 <View style={styles.statBar}>
                                     <Text style={styles.cardTitle}>
                                         {favorite.full_name}
@@ -59,23 +62,19 @@ const Favorite = ({octokit, navigation}) => {
                                     <Text style={styles.text}>
                                          {(Date(favorite.updated_at)).split("G")[0]}
                                     </Text>
-
                                 </View>
                                     <Button
                                         onPress={() => {
-                                            const oldFavorite = favorite;
                                             if (favorite) {
-                                                deleteData(favorite, octokit)
-                                                .then(res => console.log(res))
-                                                .catch(error =>
-                                                    console.log("An error occured :", error)
-                                                    );
-                                                }
-                                            }}
+                                                let tmp = favorites.concat()
+                                                deleteData(favorite);
+                                                tmp.splice(index, 1)
+                                                setFavorites(tmp);
+                                            }}}
                                             icon={<Icon name="star" color="gray"/>}
-                                            title="Starred"
+                                            title="Unstar"
                                             type="outline"
-                                            />
+                                    />
                         </TouchableOpacity>
                   ))
                 }
@@ -83,12 +82,12 @@ const Favorite = ({octokit, navigation}) => {
           </ScrollView>
         </SafeAreaView>
     )
-            }   
+}
 
 const mapStateToProps = state => state;
 const connectComponent = connect(mapStateToProps, undefined)
 
-export default connectComponent(Favorite, countFavorites)
+export default connectComponent(Favorite)
 
 const styles = StyleSheet.create({
     statBar: {
