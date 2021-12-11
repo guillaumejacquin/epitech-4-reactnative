@@ -9,13 +9,10 @@ const Repository = ({route, navigation, octokit}) => {
     const repo = route.params.repo;
 
     const [repoName, setRepoName] = useState(repo.name);
-    const [orgName, setOrgName] = useState("org");
-    const [link, setLink] = useState("todo");
     const [stars, setStars] = useState(repo.stargazers_count);
     const [forks, setForks] = useState(repo.forks_count);
     const [numberOfLines, setNumberOfLines] = useState(5);
     const [watchers, setWatchers] = useState(repo.watchers_count);
-    // const [repositories, setRepositories] = useState(null);
     const [starred, setStarred] = useState("todo");
     const [readme, setReadme] = useState("");
     const [contributors, setContributors] = useState(0);
@@ -53,44 +50,52 @@ const Repository = ({route, navigation, octokit}) => {
                         <Image source={{uri: imageUrl}} style={{width: 72.53, height: 72.53, borderRadius: 72.53/ 2}} />
                     : null }
 
-                    <View style={{flexDirection: "column", marginLeft: 10, justifyContent: "space-around"}}>
-                        <Text style={styles.repositoryText}>{repoName}</Text>
-                        <Text style={styles.organizationText}>{orgName}</Text>
+                    <View style={{flexDirection: "column", marginLeft: 10, justifyContent: "space-around", maxWidth: 200 }}>
+                        <Text numberOfLines={1} ellipsizeMode={"tail"} style={styles.repositoryText}>{repoName}</Text>
+                        <Text style={styles.organizationText}>{repo.owner.login}</Text>
                     </View>
                   </View>
 
-                    {/* Description */}
-                  <Text style={styles.descriptionText}
-                  numberOfLines={numberOfLines}
-                  ellipsizeMode={"tail"}
-                  onPress={() => {
-                    if (numberOfLines == 5)
-                        setNumberOfLines(0)
-                    else
-                        setNumberOfLines(5)
-                  }}>
-                    {description}
-                  </Text>
+                    {description ? 
+                    <Text style={styles.descriptionText}
+                    numberOfLines={numberOfLines}
+                    ellipsizeMode={"tail"}
+                    onPress={() => {
+                        if (numberOfLines == 5)
+                            setNumberOfLines(0)
+                        else
+                            setNumberOfLines(5)
+                    }}>
+                        {description}
+                    </Text>
+                    : <View marginVertical={15}></View>
+                    }
 
                   {/* Infos */}
-                  <View style={{flexDirection: "row", marginLeft: 20, marginVertical: 2}}>
-                    <Icon name='link' />
+                  <View style={{flexDirection: "row", marginHorizontal: 20, marginVertical: 2}}>
+                  <View width={30}>
+                        <Icon type='font-awesome-5' name='code-branch' />
+                      </View>
                     <Text style={styles.infos}>
-                        {link}
+                        {repo.default_branch}
                     </Text>
                   </View>
-                  <View style={{flexDirection: "row", marginLeft: 20, marginVertical: 2}}>
-                    <Icon name='star' />
+                  <View style={{flexDirection: "row", marginHorizontal: 20, marginVertical: 2}}>
+                  <View width={30}>
+                        <Icon type='font-awesome-5' name='star' />
+                      </View>
                     <Text style={styles.infos}>
                         {stars}
                     </Text>
                   </View>
-                  <View style={{flexDirection: "row", marginLeft: 20, marginVertical: 2}}>
-                    <Icon name='link' />
+                  {/* <View style={{flexDirection: "row", marginHorizontal: 20, marginVertical: 2, alignItems: 'center'}}>
+                      <View width={30}>
+                        <Icon type='font-awesome-5' name='code-branch' />
+                      </View>
                     <Text style={styles.infos}>
                         {forks}
                     </Text>
-                  </View>
+                  </View> */}
 
                   {/* Stats */}
                   <View style={{marginVertical: 20}}>
@@ -114,39 +119,43 @@ const Repository = ({route, navigation, octokit}) => {
                             </View>
                         </View>
                     </TouchableOpacity>
-                    <View style={styles.statBar}>
-                        <Text style={styles.title}>
-                            Starred
-                        </Text>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate("Forks", {repo: repo})}}>
+                        <View style={styles.statBar}>
                             <Text style={styles.title}>
-                                {starred}
+                                Forks
                             </Text>
-                            <Icon style={{marginRight: 20, marginLeft: 10}} name='star' />
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Text style={styles.title}>
+                                    {forks}
+                                </Text>
+                                <Icon style={{marginRight: 20, marginLeft: 15}} type='font-awesome-5' name='code-branch' />
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.statBar}>
-                        <Text style={styles.title}>
-                            Contributors
-                        </Text>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {navigation.navigate("Watchers", {repo: repo})}}>
+                        <View style={styles.statBar}>
                             <Text style={styles.title}>
-                                {contributors}
+                                Watchers
                             </Text>
-                            <Icon style={{marginRight: 20, marginLeft: 10}} name='group' />
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Text style={styles.title}>
+                                    {watchers}
+                                </Text>
+                                <Icon style={{marginRight: 20, marginLeft: 10}} name='group' />
+                            </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.statBar}>
-                        <Text style={styles.title}>
-                            Watchers
-                        </Text>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
                             <Text style={styles.title}>
-                                {watchers}
+                                Contributors
                             </Text>
-                            <Icon style={{marginRight: 20, marginLeft: 10}} name='group' />
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Text style={styles.title}>
+                                    {contributors}
+                                </Text>
+                                <Icon style={{marginRight: 20, marginLeft: 10}} name='group' />
+                            </View>
                         </View>
-                    </View>
                   </View>
 
                   {/* Readme */}

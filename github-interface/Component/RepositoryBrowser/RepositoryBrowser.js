@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 const RepositoryBrowser = ({route, navigation, octokit}) => {
     const [repo, setRepo] = useState(route.params.repo);
     const [selectBranch, setSelectBranch] = useState(false);
-    const [branch, setBranch] = useState("master");
+    const [branch, setBranch] = useState(repo.default_branch);
     const [branches, setBranches] = useState([]);
     const [path, setPath] = useState("");
     const [files, setFiles] = useState([]);
@@ -17,7 +17,7 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
       getAllBranches()
     }, [])
 
-    const getFiles = async (p = "", b = "master") => {
+    const getFiles = async (p = "", b = repo.default_branch) => {
       await octokit.request('GET /repos/{owner}/{repo}/contents/{path}?ref={ref}', {
         owner: repo.owner.login,
         repo: repo.name,

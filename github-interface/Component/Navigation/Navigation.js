@@ -18,6 +18,8 @@ import Home from '../Home/Home';
 import PullRequests from '../PullRequests/PullRequests';
 import PullRequest from '../PullRequest/PullRequest';
 import CreatePullRequest from '../CreatePullRequest/CreatePullRequest';
+import Watchers from '../Watchers/Watchers';
+import Forks from '../Forks/Forks';
 import { connect } from 'react-redux';
 import * as Types from '../../store/type'
 import SplashScreen from '../Splash/SplashScreen';
@@ -59,6 +61,8 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Pull requests" component={PullRequests} />
         <Stack.Screen name="Pull request" component={PullRequest} />
         <Stack.Screen name="Create pull request" component={CreatePullRequest} />
+        <Stack.Screen name="Watchers" component={Watchers} />
+        <Stack.Screen name="Forks" component={Forks} />
     </Stack.Navigator>
     )
 }

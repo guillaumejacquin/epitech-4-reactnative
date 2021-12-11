@@ -11,8 +11,11 @@ import {
 import { Icon } from "react-native-elements";
 import { connect } from "react-redux";
 import { CommonActions } from '@react-navigation/native';
+import Moment from 'moment';
+import { color } from "react-native-elements/dist/helpers";
 
 const PullRequest = ({ route, navigation, octokit }) => {
+    Moment.locale('en');
   const pr = route.params.pullRequest;
   const [pullRequest, setPullRequest] = useState([]);
 
@@ -28,6 +31,7 @@ const PullRequest = ({ route, navigation, octokit }) => {
         pull_number: pr.number,
       })
       .then((res) => {
+          console.log(res.data.user)
         setPullRequest(res.data);
       });
   };
@@ -61,7 +65,12 @@ const PullRequest = ({ route, navigation, octokit }) => {
                 justifyContent: "space-between",
               }}
             >
-              <Text style={styles.status}>Status: {pullRequest.state}</Text>
+                <View>
+                    <Text style={pullRequest.state == "open" ? styles.statusOpen : styles.statusClose}>Status: {pullRequest.state}</Text>
+                    <Text style={styles.date}>{Moment(pullRequest.created_at).format('YYYY/MM/DD')}</Text>
+                    <Text style={styles.login}>{"Created by: " + pullRequest.user?.login}</Text>
+                </View>
+
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.branch}>{pr.head.ref}</Text>
@@ -135,14 +144,31 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginVertical: 20,
   },
+  login: {
+    fontSize: 13,
+    fontWeight: "600",
+    marginTop: 2
+  },
+  date: {
+    color: "darkgray",
+    fontSize: 13,
+    fontWeight: "700",
+    marginTop: 2
+  },
   title: {
     fontSize: 20,
     fontWeight: "700",
     marginLeft: 20,
   },
-  status: {
+  statusOpen: {
     fontSize: 20,
     fontWeight: "700",
+    color: "green"
+  },
+  statusClose: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "red"
   },
   branch: {
     textAlign: "right",
