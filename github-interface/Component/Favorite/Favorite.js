@@ -5,30 +5,34 @@ import Search from '../Search/Search';
 import { Button } from 'react-native-elements';
 import { Icon } from 'react-native-elements';
 
+export const countFavorites = async(length) => {
+        return length
+}
+
+const getData = async(octokit) => {
+    const { data } = await octokit.request("GET /user/starred");
+    return data
+}
+
+const deleteData = async(favorite, octokit) => {
+    octokit.rest.activity.unstarRepoForAuthenticatedUser({
+        owner: favorite.owner.login,
+        repo: favorite.name,
+    }).then(res => {
+        console.log(res);
+    });
+}
+
 const Favorite = ({octokit, navigation}) => {
     const [favorites, setFavorites] = useState([{}])
-    const [deleteStar, setDelete] = useState();
-    
-    const getData = async() => {
-        const { data } = await octokit.request("GET /user/starred");
-        return data
-    }
-    const deleteD = async(favorite) => {
-        octokit.rest.activity.unstarRepoForAuthenticatedUser({
-            owner: favorite.owner.login,
-            repo: favorite.name,
-        }).then(res => {
-            console.log(res);
-            setDelete()
-        });
-    }
 
     useEffect(() => {
-        getData().then(res => {
+        getData(octokit).then(res => {
             setFavorites(res);
         });
     }, [octokit])
 
+    countFavorites(favorites.length);
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
@@ -39,29 +43,40 @@ const Favorite = ({octokit, navigation}) => {
                     </Text>
                     {favorites.map(favorite => (
                         <TouchableOpacity onPress={() => console.log("lol")}>
-                            <Text style={styles.cardTitle}>
                                 <View style={styles.statBar}>
                                     <Text style={styles.cardTitle}>
-                                        {favorite.name}
+                                        {favorite.full_name}
                                     </Text>
+                                </View>
+                                <View style={styles.statBar}>
+                                    <Text style={styles.text}>
+                                        {favorite.language}
+                                    </Text>
+                                    <Text style={styles.text}>
+                                        <Icon name="star"/>
+                                         {favorite.stargazers_count}
+                                    </Text>
+                                    <Text style={styles.text}>
+                                         {(Date(favorite.updated_at)).split("G")[0]}
+                                    </Text>
+
+                                </View>
                                     <Button
                                         onPress={() => {
                                             const oldFavorite = favorite;
                                             if (favorite) {
-                                                deleteD(favorite)
+                                                deleteData(favorite, octokit)
                                                 .then(res => console.log(res))
                                                 .catch(error =>
                                                     console.log("An error occured :", error)
-                                                );
-                                            } 
-                                        }}    
+                                                    );
+                                                }
+                                            }}
                                             icon={<Icon name="star" color="gray"/>}
                                             title="Starred"
                                             type="outline"
-                                    />
-                                    </View>
-                                </Text>
-                            </TouchableOpacity>
+                                            />
+                        </TouchableOpacity>
                   ))
                 }
               </View>
@@ -73,7 +88,7 @@ const Favorite = ({octokit, navigation}) => {
 const mapStateToProps = state => state;
 const connectComponent = connect(mapStateToProps, undefined)
 
-export default connectComponent(Favorite)
+export default connectComponent(Favorite, countFavorites)
 
 const styles = StyleSheet.create({
     statBar: {
@@ -93,16 +108,16 @@ const styles = StyleSheet.create({
             height: 5}
         },
     cardTitle: {
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: "700",
-        marginLeft: 20,
+        marginLeft: 10,
         marginVertical: 4,
-        marginRight: 20
+        marginRight: 20,
     },
     texte: {
         fontSize: 20,
         fontWeight: "600",
-        marginLeft: 50
+        marginLeft: 20
     },
     title: {
         fontSize: 30,
