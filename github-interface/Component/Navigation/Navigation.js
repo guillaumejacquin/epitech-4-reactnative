@@ -16,6 +16,7 @@ import FileViewer from '../FileViewer/FileViewer';
 import Organizations from '../Organizations/Organizations';
 import Home from '../Home/Home';
 import PullRequests from '../PullRequests/PullRequests';
+import PullRequest from '../PullRequest/PullRequest';
 import CreatePullRequest from '../CreatePullRequest/CreatePullRequest';
 import { connect } from 'react-redux';
 import * as Types from '../../store/type'
@@ -56,6 +57,7 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Repository browser" component={RepositoryBrowser} />
         <Stack.Screen name="FileViewer" component={FileViewer} />
         <Stack.Screen name="Pull requests" component={PullRequests} />
+        <Stack.Screen name="Pull request" component={PullRequest} />
         <Stack.Screen name="Create pull request" component={CreatePullRequest} />
     </Stack.Navigator>
     )
