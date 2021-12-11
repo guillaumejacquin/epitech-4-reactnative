@@ -8,7 +8,6 @@ import Search from '../Search/Search';
 import User from '../User/User';
 import Favorite from '../Favorite/Favorite';
 import Repository from '../Repository/Repository';
-import Issues from '../Issues/Issues';
 import RepositoryBrowser from '../RepositoryBrowser/RepositoryBrowser';
 import Details from '../Search/Details';
 import AllFile from '../Search/AllFile';
@@ -54,7 +53,6 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Repository" component={Repository} />
         <Stack.Screen name="Repository browser" component={RepositoryBrowser} />
         <Stack.Screen name="FileViewer" component={FileViewer} />
-        <Stack.Screen name="Issues" component={Issues} />
     </Stack.Navigator>
     )
 }
