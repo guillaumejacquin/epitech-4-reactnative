@@ -1,29 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Input } from 'react-native-elements';
 import { connect } from 'react-redux'
-import { Buffer } from 'buffer';
 
 const Issue = ({route, navigator, octokit}) => {
     const issue = route.params.issue;
-    useEffect(() => {        
-    })
+    const [comment, setComment] = useState({})
     const description = () => {
-        if (issue.description) {
-            return issue.description;
+        if (issue.body) {
+            return issue.body;
         }
         return "No description provided"
     }
+
+    const openClosed = () => {
+        if ((issue.state) == "open") {
+            return (<View style={{paddingHorizontal:10, paddingVertical:10, backgroundColor:'#2da44e', borderRadius:10}}>
+                <Text style={{fontSize:15, color:'white'}}>Open</Text>
+            </View>)
+        } else {
+            return (<View style={{paddingHorizontal:10, paddingVertical:10, backgroundColor:'#5c5de5', borderRadius:10}}>
+                <Text style={{fontSize:15, color:'white'}}>Closed</Text>
+            </View>)
+        }
+    }
+
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
-              <View style={{flexDirection: "column", marginVertical: 15}}>
-                        <View style={styles.statBar}>
-                            <Text style={styles.cardTitle}>
-                                {description()}
-                            </Text>
-                        </View>
-              </View>
+                <View style={styles.body}>
+                    <View style={{borderBottomWidth: 1, padding:15, flexDirection:"row", justifyContent:"space-between"}}>
+                        <Text>{issue.title}</Text>
+                        {openClosed()}
+                    </View>
+                <View style={{padding:20, backgroundColor:"white"}}>
+                    <Text>
+                        {description()}
+                    </Text>
+                </View>
+                <View style={{borderTopWidth:1, padding:10}}>
+                    <Text>Assignee</Text>
+                    {console.log(issue)}
+                {
+                    issue.assignees ?
+                        (issue.assignees).map(assignee => (<Image 
+                        source={
+                        {uri: assignee.avatar_url}}
+                        style={{width: 50, height: 50, borderRadius: 50 / 2}}
+                        />)) : ""
+                }
+                    </View>
+                </View>
+                <Input placeholder="Comment..." style={styles} onChangeText={value => setComment({ comment: value })}  />
           </ScrollView>
         </SafeAreaView>
     )
@@ -49,8 +77,12 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontSize: 20,
         fontWeight: "700",
-        marginLeft: 20
     },
+    body:{
+        borderWidth:1,
+        margin:10,
+        borderRadius:10
+    }
 })
 const mapStateToProps = state => state;
 
