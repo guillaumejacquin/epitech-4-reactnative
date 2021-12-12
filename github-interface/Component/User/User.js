@@ -21,31 +21,30 @@ const User = ({octokit}) => {
       setModalOpen(true)
     }
     
+    const UnFollow = async(people) => {
+      console.log("byebye ", people)
+      await octokit.request('DELETE /user/following/{username}', {
+        username: people
+      })
+
+      
+    }
     
-
-
     const getData = async() => {
         const {data} = await octokit.request("/user");
-        // console.log(data.login)
 
        const myfollowers = await octokit.request('GET /users/{username}/followers', {
-        username: data.login
+        username: "guillaumejacquin"
       })
-     // .login
       setFollowers(myfollowers.data)
 
-
       const myfollowings = await octokit.request('GET /users/{username}/following', {
-        username: data.login
+        username: "guillaumejacquin"
       })
       setFollowings(myfollowings.data)
 
-
       const getUserStarred = (octokit) => octokit.request('GET /user/starred');
       octokit.request('GET /user/starred')
-
-      // console.log(getUserStarred)
-
 
         const privater = data.owned_private_repos
         const publicc = data.public_repos
@@ -63,7 +62,6 @@ const User = ({octokit}) => {
     if(user)
         return (
             <View>
-              {/* {console.log(user)} */}
               <Modal visible={modalOpen} animationType='slide'>
                 {modalselector == "followers"?
                 <View>
@@ -74,33 +72,18 @@ const User = ({octokit}) => {
                 onPress={() => setModalOpen(false)}
                 />
                 <Text style={{textAlign:"center"}}>
-                  Followers
-                  {/* {Mymap()} */}
-
-                
+                  Followers          
                   {followers.map((followers) =>{
                     return(
                      <Text>
                      {console.log(followers.login)}
                    {followers.login}
-           
-                   </Text>)
-           
+
+                   {"\n"}
+                   </Text>)   
                   })}
-
-
-
-
-
-
-
                   </Text>
-                {/* <Text>
-
-                </Text> */}
-                
               </View>: null }
-
               {modalselector == "followings"?
                 <View>
                 <MaterialIcons
@@ -112,15 +95,25 @@ const User = ({octokit}) => {
                 <Text style={{textAlign:"center"}}>
                   Followings
                   </Text>
-                <Text>
-                  {console.log(followings)}
-                  {followings.map((followings) =>{
+                <Text style={{ flexDirection:"row", marginLeft:"5%"}}>
+                  {followings.map((followings, index) =>{
                     return(
-                     <Text>
-                     {console.log(followings.login)}
-                   {followings.login}
+                     <Text style={{flexDirection: "row", backgroundColor:"red"}}>
+                   {followings.login} 
+                  <Text>  
+                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => UnFollow(followings.login)}>
+                <Text> Se désabonner</Text>
+                {/* onPress={() => console.log("ahhuhu")} */}
+                  </TouchableOpacity>
+                  </Text>
+
+                  {"\n"}
+
+                   
            
                    </Text>)
+
+                   
            
                   })}
 
@@ -139,20 +132,39 @@ const User = ({octokit}) => {
               <Image style={{width:80, height:80}}source={{uri: user.avatar_url}} />
               <Text style={styles.nametitle}> {user.login}</Text>
 
+              </View> 
+
+              <View style={{flexDirection:"row"}}> 
+
+              { user.twitter_username ? <Text style={styles.twitter2}>  @{user.twitter_username} </Text> : <Text style={styles.twitter2}>  @notdefined   </Text> }
+              { user.name ? <Text style={styles.twitter2}>  Name: {user.name} </Text> : <Text style={styles.twitter2}>  no name provided </Text> }
               </View>
-              { user.twitter_username ? <Text style={styles.twitter}>  @{user.twitter_username} </Text> : <Text style={styles.twitter}>  @notdefined   </Text> }
+
+
+{/* 
+              #element1 {display:inline-block;margin-right:10px;} 
+#element2 {display:inline-block;}  */}
+              </View>
+              <View style={{flexDirection:"row", marginTop:"2%"}}> 
+
+              <View style ={{ width:"30%", borderRadius:5, borderWidth:2}}>
+              
+              { user.company ? <Text> Company : {user.company} </Text> : <Text>  no company provided </Text> }
+
+              { user.email ? <Text> Email: {user.email} </Text> : <Text>  no email </Text> }
 
 
               </View>
-              <View style ={{ width:"30%", backgroundColor:"grey", borderRadius:20}}>
-              { user.name ? <Text style={styles.twitter}>  {user.name} </Text> : <Text style={styles.twitter}>  no name provided </Text> }
- 
-              { user.company ? <Text style={styles.twitter}>  {user.company} </Text> : <Text style={styles.twitter}>  no company provided </Text> }
 
-              { user.email ? <Text style={styles.twitter}>  {user.email} </Text> : <Text style={styles.twitter}>  no email provided </Text> }
-              { user.blog ? <Text style={styles.twitter}>  {user.blog} </Text> : <Text style={styles.twitter}>  no blog </Text> }
-              { user.bio ? <Text style={styles.twitter}>  {user.bio} </Text> : <Text style={styles.twitter}>  no bio </Text> }
+              <View style ={{ width:"30%", borderRadius:5, borderColor:"black", borderWidth:2, marginLeft: "3%"}}>
+
+              { user.blog ? <Text>  {user.blog} </Text> : <Text>  no blog </Text> }
               </View>
+              <View style ={{ width:"30%", borderRadius:5, borderWidth:2, marginLeft:"3%"}}>
+              { user.bio ? <Text>  {user.bio} </Text> : <Text>  no bio </Text> }
+              </View>
+              </View>
+
 
 
               <View>
@@ -218,6 +230,15 @@ const styles = StyleSheet.create({
       textAlign:'center',
       textAlignVertical:'center',
         },
+
+
+
+    twitter2: {
+          textAlign:'center',
+          textAlignVertical:'center',
+            },
+
+            
     picture_profil: {
       width: 72.53,
       height: 72.53,
