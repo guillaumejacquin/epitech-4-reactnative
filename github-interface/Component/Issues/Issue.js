@@ -6,15 +6,12 @@ import {
   ScrollView,
   Image,
   View,
-  TouchableOpacity,
 } from "react-native";
 import { Input, Button, Icon } from "react-native-elements";
 import { connect } from "react-redux";
 
-const Issue = ({ route, navigator, octokit }) => {
+const Issue = ({ route, navigation, octokit }) => {
   const issue = route.params.issue;
-
-  const [comment, setComment] = useState({});
 
   const description = () => {
     if (issue.body) {
@@ -45,22 +42,6 @@ const Issue = ({ route, navigator, octokit }) => {
             style={{ width: 30, height: 30, borderRadius: 30 / 2 }}
           />
         )): "";
-  };
-
-  const getComments = async () => {
-    console.log(issue);
-    //console.log(issue.number)
-    //const data = issue.comments_url;
-    //console.log("TESTTTT",data)
-    //        await octokit.rest.issues.listComments({
-    //        owner: issue.owner.login,
-    //        repo: issue.repository.name,
-    //        issue_number: issue.number,
-    //      }).then(res =>
-    //        setComments(res))
-    //        .catch(error =>
-    //            console.log("an error occured", error)
-    //        );
   };
 
   const openClosed = () => {
@@ -95,10 +76,6 @@ const Issue = ({ route, navigator, octokit }) => {
     }
   };
 
-  useEffect(() => {
-    getComments();
-  }, [octokit]);
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
@@ -125,14 +102,9 @@ const Issue = ({ route, navigator, octokit }) => {
             {getAssignees()}
           </View>
         </View>
-        <View style={styles.statBar}>
-          <Input
-            placeholder="Comment..."
-            onChangeText={(value) => setComment({ comment: value })}
-          />
-          <Icon reserve name="sc-telegram" type="evilicon" color="#517fa4" />
-        </View>
-        <Button title="Comment" type="outline" />
+        <Button 
+        onPress={() => {navigation.navigate("Comments", {issue: issue})}}
+        title="Comment" type="outline" />
         <Button onPress={() => {
             closeIssue()
         }} title =

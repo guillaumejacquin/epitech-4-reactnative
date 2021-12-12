@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import * as Types from '../../store/type'
 import SplashScreen from '../Splash/SplashScreen';
 import CreateRepo from '../CreateRepo/CreateRepo';
+import Comments from '../Issues/Comments';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +59,7 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Repositories" component={Repositories} />
         <Stack.Screen name="Issues" component={Issues} />
         <Stack.Screen name="Issue" component={Issue} />
+        <Stack.Screen name="Comments" component={Comments} />
         <Stack.Screen name="Repository" component={Repository} />
         <Stack.Screen name="Repository browser" component={RepositoryBrowser} />
         <Stack.Screen name="FileViewer" component={FileViewer} />
