@@ -10,17 +10,17 @@ const CardCells = ({item, nav, theme}) => {
             return <Text>{item.login}</Text>
         }
         else {
-            return <Text>{item.id}</Text>
+            return <Text>{item.title}</Text>
         }
     }
     return (
-        <View style={styles.cells}>
+        <TouchableOpacity style={styles.cells} onPress={()=>nav(item)}>
             {themes()}
             {/* <Text>{item.login}</Text> */}
-            <TouchableOpacity onPress={()=>nav(item)}>
+            <View >
                 <Text>{">"}</Text>
-            </TouchableOpacity>
-        </View>
+            </View>
+        </TouchableOpacity>
     )
 }
 

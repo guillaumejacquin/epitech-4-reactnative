@@ -18,7 +18,7 @@ const Card = ({title, data, nav, navAllFile}) => {
                     scrollEnabled={true}
                     /> */}
                 </View>
-                <TouchableOpacity style={styles.more} onPress={() => navAllFile(data)}>
+                <TouchableOpacity style={styles.more} onPress={() => navAllFile(data, title)}>
                     <Text style={styles.titleMore}>See more ...</Text>
                 </TouchableOpacity>
             </View>

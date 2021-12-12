@@ -57,8 +57,8 @@ const Search = ({navigation, octokit}) => {
         navigation.navigate("Details", {data})
     }
     
-    const navAllFile= (data) => {
-        navigation.navigate("AllFile", {data})
+    const navAllFile= (data, name) => {
+        navigation.navigate("AllFile", {data, name})
     }
 
     const search_user = () => {
