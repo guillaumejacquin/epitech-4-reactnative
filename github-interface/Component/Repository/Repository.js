@@ -22,7 +22,7 @@ const Repository = ({route, navigation, octokit}) => {
     const [contributors, setContributors] = useState(0);
     const [imageUrl, setImageUrl] = useState("");
     const [description, setDescription] = useState(repo.description);
-    const [starsStatus, setstarsStatus] = useState(404)
+    const [starsStatus, setstarsStatus] = useState(false)
     const showConfirmDialog = () => {
         return Alert.alert(
           "Are your sure?",
@@ -52,27 +52,20 @@ const Repository = ({route, navigation, octokit}) => {
     }
 
     const getStarsRepo = async() => {
-        var result 
+
          await octokit.request('GET /user/starred/{owner}/{repo}',{
             owner: repo.owner.login,
             repo: repo.name
           }).then(res => {
-              if(res === 404){
-                  setstarsStatus(404);
-                  result = 404
-              }
-            else{
-                setstarsStatus(res.status);
-                result = res.status
-            }
+              if(res.status === 204)
+                  setstarsStatus(true);
           }).catch(e => {
-              console.log(e);
+            setstarsStatus(false);
           });
-
-          return result
     }
 
     useEffect(() => {
+        getStarsRepo()
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity style={{fontSize:16}} onPress={getStars}>
