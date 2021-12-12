@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 const Issues = ({navigation, octokit}) => {
     const [issues, setIssues] = useState([]);
+
     const getIssues = async() => {
         const {data} = await octokit.request('GET /issues', {filter: 'all'})
         console.log("data", data)
@@ -15,7 +16,7 @@ const Issues = ({navigation, octokit}) => {
     useEffect(() => {
         getIssues().then(res => {
             setIssues(res)
-        })
+        });
     }, [octokit])
     
     return (

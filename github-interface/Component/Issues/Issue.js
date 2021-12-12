@@ -1,16 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity } from 'react-native';
-import { Input } from 'react-native-elements';
+import { Input, Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 
 const Issue = ({route, navigator, octokit}) => {
     const issue = route.params.issue;
+    const repos = route.params.repos;
+
     const [comment, setComment] = useState({})
+    const [closed, setClosed] = useState()
     const description = () => {
         if (issue.body) {
             return issue.body;
         }
         return "No description provided"
+    }
+
+    const closeIssue = async() => {
+        console.log("test this", repos)
+        //await octokit.rest.issues.lock({
+        //    owner: issue.user.login,
+        //    repo: issue.name,
+        //    issue_number: issue.number,
+        //}).then(res =>
+        //    setClosed(res)
+        //);
+    }
+
+    const getAssignees = () => {
+        return (issue.assignees ?
+            (issue.assignees).map(assignee => (<Image 
+            source={
+            {uri: assignee.avatar_url}}
+            style={{width: 30, height: 30, borderRadius: 30 / 2}}
+            />)) : "")
+    }
+
+    const getComments = async() => {
+        console.log(issue)
+        //console.log(issue.number)
+        //const data = issue.comments_url;
+        //console.log("TESTTTT",data)
+//        await octokit.rest.issues.listComments({
+//        owner: issue.owner.login,
+//        repo: issue.repository.name,
+//        issue_number: issue.number,
+//      }).then(res =>
+//        setComments(res))
+//        .catch(error => 
+//            console.log("an error occured", error)
+//        );
     }
 
     const openClosed = () => {
@@ -24,6 +63,10 @@ const Issue = ({route, navigator, octokit}) => {
             </View>)
         }
     }
+
+    useEffect(() => {
+        getComments()
+    }, [octokit])
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
@@ -39,19 +82,19 @@ const Issue = ({route, navigator, octokit}) => {
                     </Text>
                 </View>
                 <View style={{borderTopWidth:1, padding:10}}>
-                    <Text>Assignee</Text>
-                    {console.log(issue)}
-                {
-                    issue.assignees ?
-                        (issue.assignees).map(assignee => (<Image 
-                        source={
-                        {uri: assignee.avatar_url}}
-                        style={{width: 50, height: 50, borderRadius: 50 / 2}}
-                        />)) : ""
-                }
-                    </View>
+                    <Text>Assignees</Text>
+                        {getAssignees()}
                 </View>
-                <Input placeholder="Comment..." style={styles} onChangeText={value => setComment({ comment: value })}  />
+                </View>
+                <View style={styles.statBar}>
+                    <Input placeholder="Comment..." onChangeText={value => setComment({ comment: value })}/>
+                    <Icon  reserve name='sc-telegram'  type='evilicon'  color='#517fa4'/>
+                </View>
+                <Button title="Comment" type="outline"/>
+                <Button
+                onPress={() => {
+                }} 
+                title="Close Issue"/>
           </ScrollView>
         </SafeAreaView>
     )
@@ -61,8 +104,8 @@ const styles = StyleSheet.create({
     statBar: {
         alignItems: "center",
         flexDirection: "row",
-        marginHorizontal: 10,
-        marginVertical: 7,
+        //marginHorizontal: 20,
+        marginVertical: 12,
         backgroundColor: "white",
         justifyContent: "space-between",
         paddingVertical: 12,
