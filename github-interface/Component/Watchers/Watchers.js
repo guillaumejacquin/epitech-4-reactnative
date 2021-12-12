@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity, RefreshControl } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 
@@ -7,8 +7,13 @@ import { connect } from 'react-redux'
 const Watchers = ({route, navigation, octokit}) => {
     const repo = route.params.repo;
 
+    const [refreshing, setRefreshing] = useState(false);
     const [watchers, setWatchers] = useState([]);
 
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getWatchers().then(() => setRefreshing(false));
+      }, []);
 
     const getWatchers = async () => {
         await octokit.request('GET /repos/{owner}/{repo}/subscribers', {
@@ -24,7 +29,12 @@ const Watchers = ({route, navigation, octokit}) => {
     
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
-          <ScrollView>
+          <ScrollView refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }>
               <View style={{flexDirection: "column", marginVertical: 15}}>
 
                   {/* Repo list */}

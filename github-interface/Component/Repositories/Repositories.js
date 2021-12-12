@@ -8,6 +8,7 @@ import {
   Image,
   View,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { connect } from "react-redux";
@@ -15,6 +16,12 @@ import { connect } from "react-redux";
 const Repositories = ({ route, navigation, octokit }) => {
     const org = route.params?.org
   const [repositories, setRepositories] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getRepos().then(() => setRefreshing(false));
+  }, []);
 
   const getRepos = async () => {
     await octokit.request("GET /user/repos").then((res) => {
@@ -30,7 +37,12 @@ const Repositories = ({ route, navigation, octokit }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView>
+      <ScrollView refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }>
         <View style={{ flexDirection: "column", marginVertical: 15 }}>
           {/* Repo list */}
           {repositories.map((repo) => (

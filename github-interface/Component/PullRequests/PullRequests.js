@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity, RefreshControl } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 import { Buffer } from 'buffer';
@@ -8,7 +8,8 @@ import { Buffer } from 'buffer';
 const PullRequests = ({route, navigation, octokit}) => {
     const repo = route.params.repo
     const max = 8
-
+    
+    const [refreshing, setRefreshing] = useState(false);
     const [pullRequestsOpen, setPullRequestsOpen] = useState([]);
     const [pullRequestsClose, setPullRequestsClose] = useState([]);
 
@@ -17,6 +18,11 @@ const PullRequests = ({route, navigation, octokit}) => {
             getPullRequests()
         })
     }, [navigation])
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getPullRequests().then(() => setRefreshing(false));
+      }, []);
 
     const getPullRequests = async () => {
         await octokit.request('GET /repos/{owner}/{repo}/pulls', {
@@ -37,6 +43,13 @@ const PullRequests = ({route, navigation, octokit}) => {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
+            
+          <ScrollView refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }>
             <TouchableOpacity onPress={() => {navigation.navigate("Create pull request", {repo: repo})}}>
                 <View style={styles.createView}>
                     <Text style={styles.createTitle}>
@@ -44,7 +57,6 @@ const PullRequests = ({route, navigation, octokit}) => {
                     </Text>
                 </View>
             </TouchableOpacity>
-          <ScrollView>
               <View style={{flexDirection: "column"}}>
                   {/* Stats */}
                   <View style={{marginVertical: 10}}>

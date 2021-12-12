@@ -1,11 +1,17 @@
 import { ExecutionEnvironment } from 'expo-constants';
 import React, {useEffect, useState} from 'react'
-import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity, RefreshControl } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 
 const Issues = ({navigation, octokit}) => {
     const [issues, setIssues] = useState([]);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getIssues().then(() => setRefreshing(false));
+      }, []);
+
 
     const getIssues = async() => {
         const {data} = await octokit.request('GET /issues', {filter: 'all'})
@@ -21,7 +27,12 @@ const Issues = ({navigation, octokit}) => {
     
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
-          <ScrollView>
+          <ScrollView refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }>
               <View style={{flexDirection: "column", marginVertical: 15}}>
                   {issues.map((issue, index) => (
                       <TouchableOpacity key={index} onPress={() => {navigation.navigate("Issue", {issue: issue})}}>
