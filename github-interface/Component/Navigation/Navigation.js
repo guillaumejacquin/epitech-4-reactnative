@@ -61,7 +61,6 @@ const RepositoryScreen = () => {
     )
 }
 
-
 const Tab = createBottomTabNavigator();
 
 const TabScreen = () => {
