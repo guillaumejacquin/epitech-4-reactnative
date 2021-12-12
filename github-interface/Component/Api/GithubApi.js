@@ -3,7 +3,7 @@ import { DrawerActions } from "@react-navigation/routers";
 
 export const auth_github= async() => {
     const octokit = new Octokit({
-        auth: "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",
+        auth: "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",
       });
       // const { orgs } = await octokit.request('GET /organizations').then(orgs => {
       //   console.log(orgs.data[3].login)
