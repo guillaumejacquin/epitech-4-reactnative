@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, CheckBox, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, CheckBox, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -71,6 +71,8 @@ const User = ({octokit}) => {
 
     if(user)
         return (
+          <ScrollView>
+
             <SafeAreaView>
               <Modal visible={modalOpen} animationType='slide'>
                 {modalselector == "followers"?
@@ -87,7 +89,7 @@ const User = ({octokit}) => {
                   <Text>
                   {followers.map((followers) =>{
                     return(
-                     <Text>
+                      <Text>
                      {console.log(followers.login)}
                    {followers.login}
                    <Text>
@@ -126,7 +128,7 @@ const User = ({octokit}) => {
                 <Text style={{ flexDirection:"row", marginLeft:"5%"}}>
                   {followings.map((followings, index) =>{
                     return(
-                     <Text style={{flexDirection: "row", backgroundColor:"red"}}>
+                      <Text style={{flexDirection: "row", backgroundColor:"red"}}>
                    {followings.login}
                     <Text>
                     isFollowing?
@@ -171,7 +173,7 @@ const User = ({octokit}) => {
 
 {/* 
               #element1 {display:inline-block;margin-right:10px;} 
-#element2 {display:inline-block;}  */}
+            #element2 {display:inline-block;}  */}
               </View>
               <View style={{flexDirection:"row", marginTop:"2%"}}> 
 
@@ -226,14 +228,15 @@ const User = ({octokit}) => {
           
       </View>
       </SafeAreaView>
+        </ScrollView>
         )
     else{
-        return (
-            <View>
-                <Text>Chargement...</Text>
+      return (
+        <View style={{flex:1, alignItems:"center", justifyContent:"center"}}>
+                <ActivityIndicator />
             </View>
         )
-    }
+      }
 }
 
 // export default User
@@ -307,7 +310,6 @@ const styles = StyleSheet.create({
 
 
  nametitle: {
-   fontFamily: "Red Hat Display",
    fontStyle: "normal",
    color: "#120E21",
    fontSize:40,
