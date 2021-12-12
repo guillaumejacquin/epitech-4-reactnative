@@ -24,15 +24,29 @@ const Repository = ({route, navigation, octokit}) => {
     
 
     const getStars = () => {
-        octokit.rest.activity.starRepoForAuthenticatedUser({
-            owner: repo.owner.login,
-            repo: repo.name
-          })
+        if(starsStatus){
+
+            octokit.rest.activity.unstarRepoForAuthenticatedUser({
+                owner: repo.owner.login,
+                repo: repo.name
+            }).then(() => {
+                setstarsStatus(false)
+            })
+
+        }
+        else{
+            octokit.rest.activity.starRepoForAuthenticatedUser({
+                owner: repo.owner.login,
+                repo: repo.name
+            }).then(() => {
+                setstarsStatus(true)
+            })
+        }
     }
 
     const getStarsRepo = async() => {
 
-         await octokit.request('GET /user/starred/{owner}/{repo}',{
+         var result = await octokit.request('GET /user/starred/{owner}/{repo}',{
             owner: repo.owner.login,
             repo: repo.name
           }).then(res => {
@@ -41,6 +55,8 @@ const Repository = ({route, navigation, octokit}) => {
           }).catch(e => {
             setstarsStatus(false);
           });
+
+          return result;
     }
     
     const deleteRepository = () => {
@@ -66,10 +82,16 @@ const Repository = ({route, navigation, octokit}) => {
 
     useEffect(() => {
         getStarsRepo()
+        console.log(starsStatus);
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity style={{fontSize:16}} onPress={getStars}>
-                    <Text>Add Stars</Text>
+                    {
+                        starsStatus ?
+                        <Image source={require('../../Image/stars.png')} style={{width:15, height:15}} /> :
+                        <Image source={require('../../Image/unstars.png')} style={{width:15, height:15}} /> 
+
+                    }
                 </TouchableOpacity>
             )},
         )
@@ -87,7 +109,7 @@ const Repository = ({route, navigation, octokit}) => {
             setReadme(res.data.content ? Buffer.from(res.data.content, 'base64').toString('ascii') : '')}).catch(err => {setReadme("")})
         // Get Profile image
         octokit.request('GET /user').then(res => {setImageUrl(res.data.avatar_url)})
-    }, [octokit])
+    }, [octokit, starsStatus])
 
 
     return (

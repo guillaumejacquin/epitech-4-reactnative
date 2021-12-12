@@ -8,6 +8,7 @@ import {
   Image,
   View,
   TouchableOpacity,
+  Button
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { connect } from "react-redux";
@@ -15,6 +16,16 @@ import { connect } from "react-redux";
 const Repositories = ({ route, navigation, octokit }) => {
     const org = route.params?.org
   const [repositories, setRepositories] = useState([]);
+
+  useEffect(() => {
+    navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => {navigation.navigate("Createrepo")}}>
+            <Image source={require('../../Image/plus.png')} style={{width:15, height:15}} />
+          </TouchableOpacity>
+        )},
+    )
+}, [])
 
   const getRepos = async () => {
     await octokit.request("GET /user/repos").then((res) => {
