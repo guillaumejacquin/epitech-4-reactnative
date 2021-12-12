@@ -35,7 +35,6 @@ const CreatePullRequest = ({route, navigation, octokit}) => {
         setHead(h)
         setSelectHead(false)
     }
-    
 
     const setBaseRefresh = (b) => {
         setBase(b)
@@ -63,8 +62,6 @@ const CreatePullRequest = ({route, navigation, octokit}) => {
                     ],
                     {
                       cancelable: true,
-                      
-                      
                     }
                   );
             })
@@ -98,9 +95,9 @@ const CreatePullRequest = ({route, navigation, octokit}) => {
                     selectedValue={head}
                     onValueChange={(itemValue, itemIndex) => setHeadRefresh(itemValue)}
                     >
-                    {branches.map(b => (
+                    {branches.map((b, index) => (
                         base != b.name ? 
-                        <Picker.Item label={b.name} value={b.name} />
+                        <Picker.Item key={index} label={b.name} value={b.name} />
                         : null
                     ))}
                     </Picker>
@@ -125,9 +122,9 @@ const CreatePullRequest = ({route, navigation, octokit}) => {
                     selectedValue={base}
                     onValueChange={(itemValue, itemIndex) => setBaseRefresh(itemValue)}
                     >
-                    {branches.map(b => (
+                    {branches.map((b, index) => (
                         head != b.name ?
-                        <Picker.Item label={b.name} value={b.name} />
+                        <Picker.Item key={index} label={b.name} value={b.name} />
                         : null
                     ))}
                     </Picker>

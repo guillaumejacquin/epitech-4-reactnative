@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 const RepositoryBrowser = ({route, navigation, octokit}) => {
     const [repo, setRepo] = useState(route.params.repo);
     const [selectBranch, setSelectBranch] = useState(false);
-    const [branch, setBranch] = useState("master");
+    const [branch, setBranch] = useState(repo.default_branch);
     const [branches, setBranches] = useState([]);
     const [path, setPath] = useState("");
     const [files, setFiles] = useState([]);
@@ -17,7 +17,7 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
       getAllBranches()
     }, [])
 
-    const getFiles = async (p = "", b = "master") => {
+    const getFiles = async (p = "", b = repo.default_branch) => {
       await octokit.request('GET /repos/{owner}/{repo}/contents/{path}?ref={ref}', {
         owner: repo.owner.login,
         repo: repo.name,
@@ -102,8 +102,8 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
               selectedValue={branch}
               onValueChange={(itemValue, itemIndex) => setBranchRefresh(itemValue)}
             >
-              {branches.map(b => (
-                <Picker.Item label={b.name} value={b.name} />
+              {branches.map((b, index) => (
+                <Picker.Item key={index} label={b.name} value={b.name} />
               ))}
             </Picker>
           : null}
@@ -111,11 +111,11 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
               <View style={{flexDirection: "column", marginTop: 30}}>
                   
                   <View style={{marginVertical: 20}}>
-                  {files.map(file => (
+                  {files.map((file, index) => (
 
                     file.type == "dir" ? 
 
-                    <TouchableOpacity key={file.name} onPress={() => {navigateDir(file.name)}}>
+                    <TouchableOpacity key={index} onPress={() => {navigateDir(file.name)}}>
                         <View style={styles.statBar}>
                             <Text style={styles.cardTitle}>
                                 {file.name}
