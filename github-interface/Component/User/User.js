@@ -23,23 +23,33 @@ const User = ({octokit}) => {
     
     const UnFollow = async(people) => {
       console.log("byebye ", people)
+      
       await octokit.request('DELETE /user/following/{username}', {
         username: people
-      })
+      }).then(response => console.log(response))
+      }
 
+    const Follow = async(people) => {
+      console.log("salut", people)
+      await octokit.request('PUT /user/following/{username}', {
+      username: people
+      })
+      }
       
+    const isFollowed = async(people) => {
+      s
     }
     
     const getData = async() => {
         const {data} = await octokit.request("/user");
 
        const myfollowers = await octokit.request('GET /users/{username}/followers', {
-        username: "guillaumejacquin"
+        username: data.login
       })
       setFollowers(myfollowers.data)
 
       const myfollowings = await octokit.request('GET /users/{username}/following', {
-        username: "guillaumejacquin"
+        username: data.login
       })
       setFollowings(myfollowings.data)
 
@@ -72,12 +82,30 @@ const User = ({octokit}) => {
                 onPress={() => setModalOpen(false)}
                 />
                 <Text style={{textAlign:"center"}}>
-                  Followers          
+                  Followers
+                  </Text>   
+                  <Text>
                   {followers.map((followers) =>{
                     return(
                      <Text>
                      {console.log(followers.login)}
                    {followers.login}
+                   <Text>
+                    isFollowing?
+                   </Text>
+
+                    <Text>  
+                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => Follow(followers.login)}>
+                <Text> S'abonner</Text>
+                {/* onPress={() => console.log("ahhuhu")} */}
+                  </TouchableOpacity>
+                  </Text>
+
+                   <Text>  
+                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => UnFollow(followers.login)}>
+                <Text> Se désabonner</Text>
+                  </TouchableOpacity>
+                  </Text>
 
                    {"\n"}
                    </Text>)   
@@ -99,7 +127,17 @@ const User = ({octokit}) => {
                   {followings.map((followings, index) =>{
                     return(
                      <Text style={{flexDirection: "row", backgroundColor:"red"}}>
-                   {followings.login} 
+                   {followings.login}
+                    <Text>
+                    isFollowing?
+                   </Text>
+                    <Text>  
+                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => Follow(followers.login)}>
+                <Text> S'abonner</Text>
+                {/* onPress={() => console.log("ahhuhu")} */}
+                  </TouchableOpacity>
+                  </Text>
+
                   <Text>  
                    <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => UnFollow(followings.login)}>
                 <Text> Se désabonner</Text>
