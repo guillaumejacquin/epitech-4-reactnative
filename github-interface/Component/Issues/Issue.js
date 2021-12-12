@@ -15,7 +15,6 @@ const Issue = ({ route, navigator, octokit }) => {
   const issue = route.params.issue;
 
   const [comment, setComment] = useState({});
-  const [closed, setClosed] = useState();
 
   const description = () => {
     if (issue.body) {
@@ -25,14 +24,16 @@ const Issue = ({ route, navigator, octokit }) => {
   };
 
   const closeIssue = async () => {
-    console.log("test this", issue.repository.name);
-    //await octokit.rest.issues.lock({
-    //    owner: issue.user.login,
-    //    repo: issue.name,
-    //    issue_number: issue.number,
-    //}).then(res =>
-    //    setClosed(res)
-    //);
+    await octokit.request("PATCH /repos/{owner}/{repo}/issues/{issue_number}", {
+        owner: issue.repository.owner.login,
+        repo: issue.repository.name,
+        issue_number: issue.number,
+        state: issue.state === "closed" ? "open" : "closed"
+    }).then(res =>
+        console.log(res)
+        ).catch(error => {
+            console.log("An error occured: ", error)
+        });
   };
 
   const getAssignees = () => {
@@ -43,8 +44,7 @@ const Issue = ({ route, navigator, octokit }) => {
             source={{ uri: assignee.avatar_url }}
             style={{ width: 30, height: 30, borderRadius: 30 / 2 }}
           />
-        ))
-      : "";
+        )): "";
   };
 
   const getComments = async () => {
@@ -135,7 +135,9 @@ const Issue = ({ route, navigator, octokit }) => {
         <Button title="Comment" type="outline" />
         <Button onPress={() => {
             closeIssue()
-        }} title="Close Issue" />
+        }} title =
+        { issue.state === "open" ? "Close Issue" : "Reopen Issue"}
+        />
       </ScrollView>
     </SafeAreaView>
   );

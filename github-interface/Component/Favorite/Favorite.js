@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native'
 import { connect } from 'react-redux'
-import Search from '../Search/Search';
 import { Button } from 'react-native-elements';
 import { Icon } from 'react-native-elements';
 
@@ -32,6 +31,8 @@ const Favorite = ({octokit, navigation}) => {
             repo: favorite.name,
         }).then(res => {
             console.log(res);
+        }).catch(error => {
+            console.log("an error occured: ", error)
         });
     }
 

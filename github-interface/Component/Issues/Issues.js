@@ -5,17 +5,32 @@ import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 
 const Issues = ({navigation, octokit}) => {
-    const [issues, setIssues] = useState([]);
+    const [openIssues, setOpenIssues] = useState([]);
+    const [closedIssues, setClosedIssues] = useState([]);
 
     const getIssues = async() => {
-        const {data} = await octokit.request('GET /issues', {filter: 'all'})
-        console.log("data", data)
-        return data
+        await octokit.request('GET /issues', {
+            state: 'open',
+            filter: 'all'
+        }).then(res => {
+            setOpenIssues(res.data)
+        }).catch(error => {
+            console.log("an error occured: ", error)
+        });
+
+        await octokit.request('GET /issues',{
+            state: 'closed',
+            filter: 'all'
+        }).then(res => {
+            setClosedIssues(res.data)
+        }).catch(error => {
+            console.log("an error occured: ", error)
+        });
     }
 
     useEffect(() => {
         getIssues().then(res => {
-            setIssues(res)
+            console.log(res)
         });
     }, [octokit])
     
@@ -23,7 +38,14 @@ const Issues = ({navigation, octokit}) => {
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
               <View style={{flexDirection: "column", marginVertical: 15}}>
-                  {issues.map((issue, index) => (
+              {openIssues.length ?
+                    <View style={styles.statBar2}>
+                    <View style={{maxWidth: "70%"}}>
+                        <Text style={styles.title}>
+                            Open
+                        </Text>
+                    </View>
+                {openIssues.map((issue, index) => (
                       <TouchableOpacity key={index} onPress={() => {navigation.navigate("Issue", {issue: issue})}}>
                         <View style={styles.statBar}>
                             <Text style={styles.cardTitle}>
@@ -35,7 +57,29 @@ const Issues = ({navigation, octokit}) => {
                         </View>
                     </TouchableOpacity>
                   ))}
-
+                  </View>
+                : null }
+                {closedIssues.length ?
+                    <View style={styles.statBar2}>
+                    <View style={{maxWidth: "70%"}}>
+                        <Text style={styles.title}>
+                            Closed
+                        </Text>
+                    </View>
+                    { closedIssues.map((issue, index) => (
+                        <TouchableOpacity key={index} onPress={() => {navigation.navigate("Issue", {issue: issue})}}>
+                            <View style={styles.statBar}>
+                                <Text style={styles.cardTitle}>
+                                    {issue.title}
+                                </Text>
+                                <View style={{alignItems: "center"}}>
+                                    <Icon style={{marginRight: 20, marginLeft: 10}} name='arrow-right' />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    ))}
+                    </View>
+                : null}
               </View>
           </ScrollView>
         </SafeAreaView>
@@ -46,6 +90,21 @@ const styles = StyleSheet.create({
     statBar: {
         alignItems: "center",
         flexDirection: "row",
+        marginHorizontal: 10,
+        marginVertical: 7,
+        backgroundColor: "white",
+        justifyContent: "space-between",
+        paddingVertical: 12,
+        borderRadius: 10,
+        shadowRadius: 10,
+        shadowColor: 'black',
+        shadowOpacity: 0.2,
+        shadowOffset: {
+            width: 5,
+            height: 5}
+        },
+    statBar2: {
+        flexDirection: "column",
         marginHorizontal: 10,
         marginVertical: 7,
         backgroundColor: "white",
