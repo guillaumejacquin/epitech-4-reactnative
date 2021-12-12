@@ -34,12 +34,12 @@ const User = ({octokit}) => {
         const {data} = await octokit.request("/user");
 
        const myfollowers = await octokit.request('GET /users/{username}/followers', {
-        username: "guillaumejacquin"
+        username: data.login
       })
       setFollowers(myfollowers.data)
 
       const myfollowings = await octokit.request('GET /users/{username}/following', {
-        username: "guillaumejacquin"
+        username: data.login
       })
       setFollowings(myfollowings.data)
 
@@ -61,10 +61,10 @@ const User = ({octokit}) => {
 
     if(user)
         return (
-            <View>
+            <SafeAreaView>
               <Modal visible={modalOpen} animationType='slide'>
                 {modalselector == "followers"?
-                <View>
+                <SafeAreaView>
                 <MaterialIcons
                 name='close'
                 style={styles.modalToggle}
@@ -83,9 +83,9 @@ const User = ({octokit}) => {
                    </Text>)   
                   })}
                   </Text>
-              </View>: null }
+              </SafeAreaView>: null }
               {modalselector == "followings"?
-                <View>
+                <SafeAreaView>
                 <MaterialIcons
                 name='close'
                 style={styles.modalToggle}
@@ -108,20 +108,10 @@ const User = ({octokit}) => {
                   </Text>
 
                   {"\n"}
-
-                   
-           
                    </Text>)
-
-                   
-           
                   })}
-
-                  
-
                 </Text>
-                
-              </View>: null }
+              </SafeAreaView>: null }
                  </Modal>
 
 
@@ -197,7 +187,7 @@ const User = ({octokit}) => {
       </TouchableOpacity>
           
       </View>
-      </View>
+      </SafeAreaView>
         )
     else{
         return (
