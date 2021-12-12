@@ -52,25 +52,32 @@ const Repository = ({route, navigation, octokit}) => {
     }
 
     const getStarsRepo = async() => {
+        var result 
          await octokit.request('GET /user/starred/{owner}/{repo}',{
             owner: repo.owner.login,
             repo: repo.name
           }).then(res => {
-              if(res === 404)
-                setstarsStatus(404);
+              if(res === 404){
+                  setstarsStatus(404);
+                  result = 404
+              }
             else{
                 setstarsStatus(res.status);
+                result = res.status
             }
           }).catch(e => {
               console.log(e);
           });
+
+          return result
     }
+
     useEffect(() => {
-        
-        getStarsRepo()
         navigation.setOptions({
             headerRight: () => (
-                <Button title="Stars" onPress={getStars}/>
+                <TouchableOpacity style={{fontSize:16}} onPress={getStars}>
+                    <Text>Add Stars</Text>
+                </TouchableOpacity>
             )},
         )
     }, [])
