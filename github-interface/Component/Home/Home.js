@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Button, Image, View, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import Card from './Card';
 
 function Home({navigation, octokit}) {
-    
+
+   
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <Button title="Add" onPress={() => {navigation.navigate("Createrepo")}}/>
+            )},
+        )
+    }, [])
     
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
