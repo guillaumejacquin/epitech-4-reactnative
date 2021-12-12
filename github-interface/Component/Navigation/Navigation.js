@@ -53,7 +53,6 @@ const RepositoryScreen = () => {
     return(
     <Stack.Navigator>
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Organizations" component={Organizations} />
         <Stack.Screen name="Repositories" component={Repositories} />
         <Stack.Screen name="Repository" component={Repository} />
         <Stack.Screen name="Repository browser" component={RepositoryBrowser} />

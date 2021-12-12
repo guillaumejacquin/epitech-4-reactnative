@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
+import { CommonActions } from '@react-navigation/native';
 import { Buffer } from 'buffer';
 
 
@@ -13,12 +14,31 @@ const Repository = ({route, navigation, octokit}) => {
     const [forks, setForks] = useState(repo.forks_count);
     const [numberOfLines, setNumberOfLines] = useState(5);
     const [watchers, setWatchers] = useState(repo.watchers_count);
-    const [starred, setStarred] = useState("todo");
     const [readme, setReadme] = useState("");
     const [contributors, setContributors] = useState(0);
     const [imageUrl, setImageUrl] = useState("");
     const [description, setDescription] = useState(repo.description);
     
+    const deleteRepository = () => {
+        Alert.alert(
+            "Warring",
+            "Delete a repository is irreversible, do you really want to delete this repository?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel"
+              },
+              { text: "Yes", onPress: () => {
+                octokit.request('DELETE /repos/{owner}/{repo}', {
+                    owner: repo.owner.login,
+                    repo: repo.name
+                  }).then(res => {
+                    navigation.dispatch(CommonActions.goBack())
+                  })
+              } }
+            ]
+          );
+    }
 
     useEffect(() => {
 
@@ -44,8 +64,7 @@ const Repository = ({route, navigation, octokit}) => {
           <ScrollView>
               <View style={{flexDirection: "column", marginTop: 30}}>
 
-                    {/* Head: Image, repo & organization names */}
-                  <View style={{flexDirection: "row", marginLeft: 30}}>
+                  <View style={{flexDirection: "row", marginLeft: 20}}>
                     { imageUrl ? 
                         <Image source={{uri: imageUrl}} style={{width: 72.53, height: 72.53, borderRadius: 72.53/ 2}} />
                     : null }
@@ -88,16 +107,7 @@ const Repository = ({route, navigation, octokit}) => {
                         {stars}
                     </Text>
                   </View>
-                  {/* <View style={{flexDirection: "row", marginHorizontal: 20, marginVertical: 2, alignItems: 'center'}}>
-                      <View width={30}>
-                        <Icon type='font-awesome-5' name='code-branch' />
-                      </View>
-                    <Text style={styles.infos}>
-                        {forks}
-                    </Text>
-                  </View> */}
 
-                  {/* Stats */}
                   <View style={{marginVertical: 20}}>
                     <TouchableOpacity onPress={() => {navigation.navigate("Repository browser", {repo: repo})}}>
                         <View style={styles.statBar}>
@@ -158,10 +168,20 @@ const Repository = ({route, navigation, octokit}) => {
                         </View>
                   </View>
 
-                  {/* Readme */}
-                  <Text style={styles.descriptionText}>
-                    {readme}
-                  </Text>
+                  {readme ? 
+                    <Text style={styles.descriptionText}>
+                        {readme}
+                    </Text>
+                  : null}
+                  <TouchableOpacity
+                    onPress={() => {
+                        deleteRepository()
+                    }}
+                    >
+                    <View style={styles.deleteView}>
+                        <Text style={styles.deleteTitle}>Delete repository</Text>
+                    </View>
+                </TouchableOpacity>
               </View>
           </ScrollView>
         </SafeAreaView>
@@ -197,7 +217,7 @@ const styles = StyleSheet.create({
         lineHeight: 19,
     },
     repositoryText: {
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: "700"
     },
     descriptionText: {
@@ -212,7 +232,29 @@ const styles = StyleSheet.create({
         color: 'darkgray',
         fontSize: 20,
         marginLeft: 10
-    }
+    },
+    deleteView: {
+        alignItems: "center",
+        marginHorizontal: 60,
+        marginBottom: 20,
+        paddingVertical: 12,
+        marginTop: 10,
+        backgroundColor: "red",
+        borderRadius: 10,
+        shadowRadius: 10,
+        shadowColor: "black",
+        shadowOpacity: 0.2,
+        shadowOffset: {
+          width: 5,
+          height: 5,
+        },
+      },
+      deleteTitle: {
+        fontSize: 15,
+        fontWeight: "600",
+        textAlign: "center",
+        color: "white",
+      },
 })
 
 const mapStateToProps = state => state;

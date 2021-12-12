@@ -31,7 +31,6 @@ const PullRequest = ({ route, navigation, octokit }) => {
         pull_number: pr.number,
       })
       .then((res) => {
-          console.log(res.data.user)
         setPullRequest(res.data);
       });
   };

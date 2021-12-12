@@ -13,7 +13,9 @@ const PullRequests = ({route, navigation, octokit}) => {
     const [pullRequestsClose, setPullRequestsClose] = useState([]);
 
     useEffect(() => {
-        getPullRequests()
+        const unsubscribe = navigation.addListener('focus', () => {
+            getPullRequests()
+        })
     }, [navigation])
 
     const getPullRequests = async () => {
