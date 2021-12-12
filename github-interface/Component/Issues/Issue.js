@@ -13,10 +13,10 @@ import { connect } from "react-redux";
 
 const Issue = ({ route, navigator, octokit }) => {
   const issue = route.params.issue;
-  const repos = route.params.repos;
 
   const [comment, setComment] = useState({});
   const [closed, setClosed] = useState();
+
   const description = () => {
     if (issue.body) {
       return issue.body;
@@ -25,7 +25,7 @@ const Issue = ({ route, navigator, octokit }) => {
   };
 
   const closeIssue = async () => {
-    console.log("test this", repos);
+    console.log("test this", issue.repository.name);
     //await octokit.rest.issues.lock({
     //    owner: issue.user.login,
     //    repo: issue.name,
@@ -133,7 +133,9 @@ const Issue = ({ route, navigator, octokit }) => {
           <Icon reserve name="sc-telegram" type="evilicon" color="#517fa4" />
         </View>
         <Button title="Comment" type="outline" />
-        <Button onPress={() => {}} title="Close Issue" />
+        <Button onPress={() => {
+            closeIssue()
+        }} title="Close Issue" />
       </ScrollView>
     </SafeAreaView>
   );
