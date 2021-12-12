@@ -182,6 +182,13 @@ const Repository = ({route, navigation, octokit}) => {
                             </View>
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {navigation.navigate("Issues", {repo: repo})}}>
+                        <View style={styles.statBar}>
+                            <Text style={styles.title}>
+                                Issues
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => {navigation.navigate("Forks", {repo: repo})}}>
                         <View style={styles.statBar}>
                             <Text style={styles.title}>
