@@ -15,11 +15,16 @@ import AllFile from '../Search/AllFile';
 import Repositories from '../Repositories/Repositories';
 import FileViewer from '../FileViewer/FileViewer';
 import Issues from '../Issues/Issues';
-import Organizations from '../Organizations/Organizations';
 import Home from '../Home/Home';
+import PullRequests from '../PullRequests/PullRequests';
+import PullRequest from '../PullRequest/PullRequest';
+import CreatePullRequest from '../CreatePullRequest/CreatePullRequest';
+import Watchers from '../Watchers/Watchers';
+import Forks from '../Forks/Forks';
 import { connect } from 'react-redux';
 import * as Types from '../../store/type'
 import SplashScreen from '../Splash/SplashScreen';
+import CreateRepo from '../CreateRepo/CreateRepo';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,13 +55,18 @@ const RepositoryScreen = () => {
     return(
     <Stack.Navigator>
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Organizations" component={Organizations} />
         <Stack.Screen name="Repositories" component={Repositories} />
         <Stack.Screen name="Issues" component={Issues} />
         <Stack.Screen name="Issue" component={Issue} />
         <Stack.Screen name="Repository" component={Repository} />
         <Stack.Screen name="Repository browser" component={RepositoryBrowser} />
         <Stack.Screen name="FileViewer" component={FileViewer} />
+        <Stack.Screen name="Createrepo" component={CreateRepo} />
+        <Stack.Screen name="Pull requests" component={PullRequests} />
+        <Stack.Screen name="Pull request" component={PullRequest} />
+        <Stack.Screen name="Create pull request" component={CreatePullRequest} />
+        <Stack.Screen name="Watchers" component={Watchers} />
+        <Stack.Screen name="Forks" component={Forks} />
     </Stack.Navigator>
     )
 }
