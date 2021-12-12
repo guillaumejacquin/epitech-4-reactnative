@@ -23,8 +23,8 @@ const Issues = ({navigation, octokit}) => {
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
               <View style={{flexDirection: "column", marginVertical: 15}}>
-                  {issues.map(issue => (
-                      <TouchableOpacity onPress={() => {navigation.navigate("Issue", {issue: issue})}}>
+                  {issues.map((issue, index) => (
+                      <TouchableOpacity key={index} onPress={() => {navigation.navigate("Issue", {issue: issue})}}>
                         <View style={styles.statBar}>
                             <Text style={styles.cardTitle}>
                                 {issue.title}

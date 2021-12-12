@@ -45,7 +45,7 @@ const Favorite = ({octokit, navigation}) => {
                         <Icon name='star' /> Favoris
                     </Text>
                     {favorites.map((favorite, index) => (
-                        <TouchableOpacity onPress={() => {navigation.navigate("Repository", {repo: favorite})}}>
+                        <TouchableOpacity key={index} onPress={() => {navigation.navigate("Repository", {repo: favorite})}}>
                                 <View style={styles.statBar}>
                                     <Text style={styles.cardTitle}>
                                         {favorite.full_name}

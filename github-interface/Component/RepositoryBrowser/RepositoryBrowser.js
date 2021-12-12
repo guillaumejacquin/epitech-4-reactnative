@@ -22,7 +22,6 @@ const RepositoryBrowser = ({route, navigation, octokit}) => {
       }).then(res => {
         setFiles(res.data)
       })
-
     }
 
     const navigateDir = async (dir) => {
