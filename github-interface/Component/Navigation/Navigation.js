@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import Issue from '../Issues/Issue';
 import Search from '../Search/Search';
 import User from '../User/User';
 import Favorite from '../Favorite/Favorite';
@@ -13,6 +14,7 @@ import Details from '../Search/Details';
 import AllFile from '../Search/AllFile';
 import Repositories from '../Repositories/Repositories';
 import FileViewer from '../FileViewer/FileViewer';
+import Issues from '../Issues/Issues';
 import Organizations from '../Organizations/Organizations';
 import Home from '../Home/Home';
 import { connect } from 'react-redux';
@@ -50,6 +52,8 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Organizations" component={Organizations} />
         <Stack.Screen name="Repositories" component={Repositories} />
+        <Stack.Screen name="Issues" component={Issues} />
+        <Stack.Screen name="Issue" component={Issue} />
         <Stack.Screen name="Repository" component={Repository} />
         <Stack.Screen name="Repository browser" component={RepositoryBrowser} />
         <Stack.Screen name="FileViewer" component={FileViewer} />

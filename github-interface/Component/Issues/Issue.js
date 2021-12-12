@@ -1,40 +1,28 @@
-import { ExecutionEnvironment } from 'expo-constants';
-import React, {useEffect, useState} from 'react'
-import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
+import { Buffer } from 'buffer';
 
-const Issues = ({navigation, octokit}) => {
-    const [issues, setIssues] = useState([]);
-    const getIssues = async() => {
-        const {data} = await octokit.request('GET /issues', {filter: 'all'})
-        console.log("data", data)
-        return data
+const Issue = ({route, navigator, octokit}) => {
+    const issue = route.params.issue;
+    useEffect(() => {        
+    })
+    const description = () => {
+        if (issue.description) {
+            return issue.description;
+        }
+        return "No description provided"
     }
-
-    useEffect(() => {
-        getIssues().then(res => {
-            setIssues(res)
-        })
-    }, [octokit])
-    
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
               <View style={{flexDirection: "column", marginVertical: 15}}>
-                  {issues.map(issue => (
-                      <TouchableOpacity onPress={() => {navigation.navigate("Issue", {issue: issue})}}>
                         <View style={styles.statBar}>
                             <Text style={styles.cardTitle}>
-                                {issue.title}
+                                {description()}
                             </Text>
-                            <View style={{alignItems: "center"}}>
-                                <Icon style={{marginRight: 20, marginLeft: 10}} name='arrow-right' />
-                            </View>
                         </View>
-                    </TouchableOpacity>
-                  ))}
-
               </View>
           </ScrollView>
         </SafeAreaView>
@@ -59,7 +47,7 @@ const styles = StyleSheet.create({
             height: 5}
         },
     cardTitle: {
-        fontSize: 15,
+        fontSize: 20,
         fontWeight: "700",
         marginLeft: 20
     },
@@ -67,4 +55,4 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => state;
 
 const connectComponent = connect(mapStateToProps, undefined)
-export default connectComponent(Issues)
+export default connectComponent(Issue)
