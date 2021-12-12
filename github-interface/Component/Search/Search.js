@@ -56,6 +56,10 @@ const Search = ({navigation, octokit}) => {
     const nav= (data) => {
         navigation.navigate("Details", {data})
     }
+
+    const navRepository = (data) => {
+        navigation.navigate("RepositoryView", {repo: data})
+    }
     
     const navAllFile= (data, name) => {
         navigation.navigate("AllFile", {data, name})
@@ -107,7 +111,7 @@ const Search = ({navigation, octokit}) => {
                 {
                     input ? 
                     <View>
-                        <Card title={"Repositories"} data={repositories} nav={nav} navAllFile={navAllFile}/>
+                        <Card title={"Repositories"} data={repositories} nav={navRepository} navAllFile={navAllFile}/>
                         <Card title={"Users"} data={user} nav={nav} navAllFile={navAllFile}/>
                         <Card title={"Issues"} data={issues} nav={nav} navAllFile={navAllFile}/>
                     </View> :  <View style={{alignItems:"center", justifyContent:"center", flex:1}}>

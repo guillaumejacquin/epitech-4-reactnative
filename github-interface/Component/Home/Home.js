@@ -7,13 +7,13 @@ import Card from './Card';
 function Home({navigation, octokit}) {
 
    
-    useEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <Button title="Add" onPress={() => {navigation.navigate("Createrepo")}}/>
-            )},
-        )
-    }, [])
+    // useEffect(() => {
+    //     navigation.setOptions({
+    //         headerRight: () => (
+    //             <Button title="Add" onPress={() => {navigation.navigate("Createrepo")}}/>
+    //         )},
+    //     )
+    // }, [])
     
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>

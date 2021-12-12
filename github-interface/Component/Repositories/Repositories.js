@@ -9,12 +9,13 @@ import {
   View,
   TouchableOpacity,
   RefreshControl,
+  Button,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { connect } from "react-redux";
 
 const Repositories = ({ route, navigation, octokit }) => {
-    const org = route.params?.org
+  const org = route.params?.org;
   const [repositories, setRepositories] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -23,9 +24,26 @@ const Repositories = ({ route, navigation, octokit }) => {
     getRepos().then(() => setRefreshing(false));
   }, []);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Createrepo");
+          }}
+        >
+          <Image
+            source={require("../../Image/plus.png")}
+            style={{ width: 15, height: 15 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   const getRepos = async () => {
     await octokit.request("GET /user/repos").then((res) => {
-        setRepositories(res.data);
+      setRepositories(res.data);
     });
   };
 
@@ -37,12 +55,11 @@ const Repositories = ({ route, navigation, octokit }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={{ flexDirection: "column", marginVertical: 15 }}>
           {/* Repo list */}
           {repositories.map((repo) => (
