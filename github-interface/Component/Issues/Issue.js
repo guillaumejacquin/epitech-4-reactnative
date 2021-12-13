@@ -6,7 +6,6 @@ import {
   ScrollView,
   Image,
   View,
-  TouchableOpacity,
   ActivityIndicator
 } from "react-native";
 import { Input, Button, Icon } from "react-native-elements";
@@ -14,16 +13,6 @@ import { connect } from "react-redux";
 
 const Issue = ({ route, navigation, octokit }) => {
   const issue = route.params.issue;
-  //const [issue, setIssue] = useState()
-//
-  //const getIssue = async () => {
-  //  await octokit.rest.issues.get({
-  //    owner: oldIssue.repository.owner.login,
-  //    repo: oldIssue.repository.name,
-  //    issue_number: oldIssue.number,
-  //  }).then(res => {setIssue(res)})
-  //    .catch( error => console.log(error));
-  //}
 
   const description = () => {
     if (issue.body) {
@@ -91,7 +80,6 @@ const Issue = ({ route, navigation, octokit }) => {
   const [comments, setComments] = useState([]);
 
     const getComments = async() => {
-      console.log("test")
         await octokit.rest.issues.listComments({
             owner: issue.repository.owner.login,
             repo: issue.repository.name,
@@ -104,9 +92,8 @@ const Issue = ({ route, navigation, octokit }) => {
   }
 
     useEffect(() => {
-      getIssue()
       getComments()
-  }, [octokit/*, issue*/])
+  }, [octokit])
 
   if (issue)
     return (
@@ -137,10 +124,17 @@ const Issue = ({ route, navigation, octokit }) => {
           <ScrollView>
             <View style={{margin:10}}>
                 <Text>Created at: {(Date(issue.created_at)).split("G")[0]}</Text>
-                <Text>Author: {issue.repository.owner.login}</Text>
+                <Text>Author: </Text>
+                <Image
+                  source={{ uri: issue.repository.owner.avatar_url }}
+                  style={{ width: 30, height: 30, borderRadius: 30 / 2 }}
+                />
             </View>
         </ScrollView>
         </View>
+        <Text style={styles.title}>
+          Comments :
+        </Text>
         {comments.map((comment, index) => (
             <View key={index} style={styles.statBar}>
             <Text style={styles.cardTitle}>

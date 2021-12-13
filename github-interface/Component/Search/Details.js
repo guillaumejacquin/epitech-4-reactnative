@@ -1,14 +1,11 @@
 import React from 'react'
-import { View } from 'react-native'
+import { View, Text } from 'react-native'
+import IssuesScreen from '../Issues/IssuesScreen'
 
-const Details = ({route, navigation}) => {
-    const nav = (data) => {
-
-    }
-
+const Details = ({route}) => {
     return (
         <View>
-            <Issue route={route, navigation}/>
+            <IssuesScreen data={route.params.data}/>
         </View>
     )
 }
