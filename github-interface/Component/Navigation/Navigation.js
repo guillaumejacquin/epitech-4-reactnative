@@ -41,8 +41,10 @@ const SearchScreen = () => {
     return(
     <Stack.Navigator>
         <Stack.Screen name="Search" component={Search} />
+        <Stack.Screen name="postComment" component={postComment} />
         <Stack.Screen name="Details" component={Details} />
         <Stack.Screen name="AllFile" component={AllFile} />
+        <Stack.Screen name="Issue" component={Issue} />
       </Stack.Navigator>
     )
 }
@@ -60,7 +62,6 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Repositories" component={Repositories} />
         <Stack.Screen name="Issues" component={Issues} />
         <Stack.Screen name="Issue" component={Issue} />
-        <Stack.Screen name="Comment" component={Comment} />
         <Stack.Screen name="postComment" component={postComment} />
         <Stack.Screen name="Repository" component={Repository} />
         <Stack.Screen name="Repository browser" component={RepositoryBrowser} />

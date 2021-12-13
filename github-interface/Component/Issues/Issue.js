@@ -6,12 +6,24 @@ import {
   ScrollView,
   Image,
   View,
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 import { Input, Button, Icon } from "react-native-elements";
 import { connect } from "react-redux";
 
 const Issue = ({ route, navigation, octokit }) => {
   const issue = route.params.issue;
+  //const [issue, setIssue] = useState()
+//
+  //const getIssue = async () => {
+  //  await octokit.rest.issues.get({
+  //    owner: oldIssue.repository.owner.login,
+  //    repo: oldIssue.repository.name,
+  //    issue_number: oldIssue.number,
+  //  }).then(res => {setIssue(res)})
+  //    .catch( error => console.log(error));
+  //}
 
   const description = () => {
     if (issue.body) {
@@ -76,7 +88,28 @@ const Issue = ({ route, navigation, octokit }) => {
     }
   };
 
-  return (
+  const [comments, setComments] = useState([]);
+
+    const getComments = async() => {
+      console.log("test")
+        await octokit.rest.issues.listComments({
+            owner: issue.repository.owner.login,
+            repo: issue.repository.name,
+            issue_number: issue.number,
+        }).then(res =>
+            setComments(res.data))
+        .catch(error =>
+                console.log("an error occured", error)
+        );
+  }
+
+    useEffect(() => {
+      getIssue()
+      getComments()
+  }, [octokit/*, issue*/])
+
+  if (issue)
+    return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
         <View style={styles.body}>
@@ -98,12 +131,25 @@ const Issue = ({ route, navigation, octokit }) => {
             <Text>{description()}</Text>
           </View>
           <View style={{ borderTopWidth: 1, padding: 10 }}>
-            <Text>Assignees</Text>
+            <Text>Assignees: </Text>
             {getAssignees()}
           </View>
+          <ScrollView>
+            <View style={{margin:10}}>
+                <Text>Created at: {(Date(issue.created_at)).split("G")[0]}</Text>
+                <Text>Author: {issue.repository.owner.login}</Text>
+            </View>
+        </ScrollView>
         </View>
+        {comments.map((comment, index) => (
+            <View key={index} style={styles.statBar}>
+            <Text style={styles.cardTitle}>
+                  {comment.body}
+            </Text>
+            </View>
+        ))}
         <Button 
-        onPress={() => {navigation.navigate("Comment", {issue: issue})}}
+        onPress={() => {navigation.navigate("postComment", {issue: issue})}}
         title="Comment" type="outline" />
         <Button onPress={() => {
             closeIssue()
@@ -113,17 +159,20 @@ const Issue = ({ route, navigation, octokit }) => {
       </ScrollView>
     </SafeAreaView>
   );
+  else {
+    return <ActivityIndicator/>
+  }
 };
 
 const styles = StyleSheet.create({
   statBar: {
     alignItems: "center",
     flexDirection: "row",
-    //marginHorizontal: 20,
-    marginVertical: 12,
+    marginHorizontal: 20,
+    marginVertical: 10,
     backgroundColor: "white",
     justifyContent: "space-between",
-    paddingVertical: 12,
+    paddingVertical: 18,
     borderRadius: 10,
     shadowRadius: 10,
     shadowColor: "black",
@@ -134,7 +183,7 @@ const styles = StyleSheet.create({
     },
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: "700",
   },
   body: {

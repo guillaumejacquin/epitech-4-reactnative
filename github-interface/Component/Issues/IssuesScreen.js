@@ -21,6 +21,7 @@ const Body = ({title, author, body, status}) => {
         </View>
     )
 }
+
 const IssuesScreen = ({data}) => {
     console.log(data.labels);
     return (
