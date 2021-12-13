@@ -1,13 +1,13 @@
 import React,{useEffect, useState} from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, CheckBox, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, CheckBox, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
 
 
-const User = ({octokit}) => {
+const User = ({octokit, route}) => {
     const [user, setuser] = useState(undefined)
     const [modalOpen, setModalOpen] = useState(false);
     const [modalselector, setModalSelector] = useState(null);
@@ -16,29 +16,23 @@ const User = ({octokit}) => {
     const [repo, setRepo] = useState(0)
     const [isSelected, setSelection] = useState(false);
 
+
     const openmodal = (modal) => {
       setModalSelector(modal)
       setModalOpen(true)
     }
     
-    const UnFollow = async(people) => {
-      console.log("byebye ", people)
-      
+    const UnFollow = async(people) => {      
       await octokit.request('DELETE /user/following/{username}', {
         username: people
       }).then(response => console.log(response))
       }
 
     const Follow = async(people) => {
-      console.log("salut", people)
       await octokit.request('PUT /user/following/{username}', {
       username: people
       })
       }
-      
-    const isFollowed = async(people) => {
-      s
-    }
     
     const getData = async() => {
         const {data} = await octokit.request("/user");
@@ -71,6 +65,7 @@ const User = ({octokit}) => {
 
     if(user)
         return (
+          <ScrollView>
             <SafeAreaView>
               <Modal visible={modalOpen} animationType='slide'>
                 {modalselector == "followers"?
@@ -226,11 +221,13 @@ const User = ({octokit}) => {
           
       </View>
       </SafeAreaView>
+      </ScrollView>
+
         )
     else{
         return (
-            <View>
-                <Text>Chargement...</Text>
+            <View style={{flex:1, alignItems:"center", justifyContent:"center"}}>
+                <ActivityIndicator />
             </View>
         )
     }
@@ -304,6 +301,8 @@ const styles = StyleSheet.create({
 
 
 },
+
+
  nametitle: {
    fontStyle: "normal",
    color: "#120E21",

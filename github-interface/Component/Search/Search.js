@@ -60,6 +60,10 @@ const Search = ({navigation, octokit}) => {
     const navRepository = (data) => {
         navigation.navigate("RepositoryView", {repo: data})
     }
+
+    const navUser = (data) => {
+        navigation.navigate("UserDetail", {data})
+    }
     
     const navAllFile= (data, name) => {
         navigation.navigate("AllFile", {data, name})
@@ -112,10 +116,10 @@ const Search = ({navigation, octokit}) => {
                     input ? 
                     <View>
                         <Card title={"Repositories"} data={repositories} nav={navRepository} navAllFile={navAllFile}/>
-                        <Card title={"Users"} data={user} nav={nav} navAllFile={navAllFile}/>
+                        <Card title={"Users"} data={user} nav={navUser} navAllFile={navAllFile}/>
                         <Card title={"Issues"} data={issues} nav={nav} navAllFile={navAllFile}/>
                     </View> :  <View style={{alignItems:"center", justifyContent:"center", flex:1}}>
-                        <Text>Veuillez éffectuer une recherche ...</Text>
+                        <Text>Please perform a search ...</Text>
                     </View>
                 }
             </ScrollView>
