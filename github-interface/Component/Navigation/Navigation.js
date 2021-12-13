@@ -44,8 +44,9 @@ const SearchScreen = () => {
         <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="Details" component={Details} options={options}/>
         <Stack.Screen name="AllFile" component={AllFile} options={options}/>
-        <Stack.Screen name="RepositoryView" component={Repository} options={options}/>
+        <Stack.Screen name="Repository" component={Repository} options={options}/>
         <Stack.Screen name="Contributors" component={Contributors} options={options}/>
+        <Stack.Screen name="Repositories" component={Repositories} options={options}/>
         <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
       </Stack.Navigator>
     )
