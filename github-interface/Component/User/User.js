@@ -1,50 +1,11 @@
 import React,{useEffect, useState} from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, CheckBox, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, CheckBox, Button, View, SafeAreaView, Text, Alert, Image, TouchableOpacity, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
 
-const MymodalFollowing = (followings) => {
-    return(
-      <Text>
-      <Text style={{flexDirection: "row"}}>
-      <TouchableOpacity >
-        <Text>
-      {followings.login}
-        </Text>
-      </TouchableOpacity>
-         <Text>     
-         </Text>
-
-       <Text>  
-         <TouchableOpacity  onPress={() => Follow(followers.login)}>
-            <Text> S'abonner </Text>
-         </TouchableOpacity>
-        </Text>
-         
-         <Text onPress={() => UnFollow(followings.login)}>  
-         
-      <TouchableOpacity style={{flexDirection:"row", width:"30%", backgroundColor:"green"}}>
-         <Text> Se désabonner</Text>
-      </TouchableOpacity>
-         </Text>
-     {"\n"}
-      </Text>
-
-      <Text style={{flexDirection:"row"}}>
-        <Text style={{width:"50%", borderWidth:2, borderWidth:2}}> POUET</Text>
-        <Text style={{width:"50%", borderWidth:2}}> POUET</Text>
-        <Text style={{width:"50%"}}> POUET</Text>
-
-
-      </Text>
-      {"\n"}
-        {"\n"}
-
-      </Text>
-      )}
 
 
 
@@ -59,6 +20,10 @@ const User = ({octokit}) => {
     const [repo, setRepo] = useState(0)
     const [isSelected, setSelection] = useState(false);
 
+
+    const [checkFollowingState, setCheckFollowingState] = useState([]);
+
+
     const openmodal = (modal) => {
       setModalSelector(modal)
       setModalOpen(true)
@@ -70,7 +35,6 @@ const User = ({octokit}) => {
       await octokit.request('DELETE /user/following/{username}', {
         username: people
       })  
-
       }
 
       const Test = async() => {
@@ -79,33 +43,35 @@ const User = ({octokit}) => {
  
       }
 
+      const checkisFollowing = async(isuserfollowing) => {
+        var mylog = 0
+        try {
+          await octokit.request('GET /users/{username}/following/{target_user}', {
+            username: user.login,
+            target_user: isuserfollowing
+          }).then(res=>mylog = ((res.status)))
+          
+          if (mylog == 204) {
+            setCheckFollowingState("You follow him")
+            console.log("following ", isuserfollowing, " nice ")
+          }
+        }
+       catch  {
+          console.log("not following", isuserfollowing)
+          setCheckFollowingState("You  don't follow him")
 
-
-      const checkisFollowing = async(fanfan) => {
-        console.log(fanfan, "is following?")
-
-        await octokit.request('GET /users/{username}/following/{target_user}', {
-          username: user.login,
-          target_user: fanfan
-        }).then(console.log(res))
-        return("1")
- 
+        } 
+        return(1)
       }
 
     const Follow = async(people) => {
       console.log("salut", people)
       await octokit.request('PUT /user/following/{username}', {
       username: people
-      })
+        })
       }
 
   
-      
-    const isFollowed = async(people) => {
-      console.log("a")
-      return(3)
-    }
-    
     const getData = async() => {
         const {data} = await octokit.request("/user");
 
@@ -130,9 +96,11 @@ const User = ({octokit}) => {
             setuser(res);
         })
     }, [octokit])
-
+    var test = "a";
     if(user)
         return (
+          <ScrollView>
+
             <SafeAreaView>
               <Modal visible={modalOpen} animationType='slide'>
 
@@ -144,35 +112,53 @@ const User = ({octokit}) => {
                 size={24}
                 onPress={() => setModalOpen(false)}
                 />
-                <Text style={{textAlign:"center"}}>
+                <Text style={{textAlign:"center", fontSize:40}}>
                   Followers
-                  </Text>   
-                  <Text>
-                  {followers.map((followers) =>{
-                    return(
-                      
+                  </Text>  
+
+                  <Text style={{marginTop:"2%", justifyContent:"space-around", width:"100%", border:"solid"}}>
+                  {followers.map((followers, index) =>{
+                    {(test = (checkisFollowing(followers.login)))}
+
+                    return(     
                      <Text>
-                   {followers.login}
-                   <Text>
-                    isFollowing?
-                   </Text>
-                   {checkisFollowing(followers.login)}
+                      <Text>  
+                        <Text>
+                      {/* {console.log(checkFollowingState[index])} */}
+                      </Text>
+                    
+             
+                  </Text>
+
                    
-
-
-                    <Text>  
-                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => Follow(followers.login)}>
-                <Text> S'abonner</Text>
-                  </TouchableOpacity>
-                  </Text>
-
-                   <Text>  
-                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => UnFollow(followers.login)}>
-                <Text> Se désabonner</Text>
-                  </TouchableOpacity>
-                  </Text>
                    {"\n"}
-                   </Text>)   
+                   <Text style={{flexDirection:"row", justifyContent:"space-around"}}>
+                   
+                   <Text>   <TouchableOpacity style={{flexDirection:"row", justifyContent:"space-around"}}>
+                    <Text style={{backgroundColor:"white", justifyContent:"space-around"}}> {followers.login}</Text>
+                    </TouchableOpacity></Text>
+
+                    <Text>   <TouchableOpacity style={{flexDirection:"row", justifyContent:"space-around"}}>
+                    <Text style={{backgroundColor:"white", justifyContent:"space-around"}}> test</Text>
+                    </TouchableOpacity></Text>
+
+
+                    <Text>   <TouchableOpacity style={{flexDirection:"row", borderWidth:2, backgroundColor:"green", justifyContent:"space-around"}} onPress={() => Follow(followers.login)}>
+                    <Text style={{backgroundColor:"green", justifyContent:"space-around", color:"white"}}> S'abonner</Text>
+
+                    </TouchableOpacity></Text>
+
+                    
+                        <Text>  <TouchableOpacity style={{flexDirection:"row", borderWidth:2, justifyContent:"space-around"}} onPress={() => UnFollow(followers.login)}>
+                        <Text style={{backgroundColor:"red", justifyContent:"space-around", color:"white"}}> Se désabonner</Text>
+
+                  </TouchableOpacity></Text>
+                      </Text>
+                      {"\n"}
+                        {"\n"}
+
+                   </Text>)
+                   
                   })}
                   </Text>
               </SafeAreaView>: null }
@@ -186,15 +172,45 @@ const User = ({octokit}) => {
                 size={24}
                 onPress={() => Test()}
                 />
-                <Text style={{textAlign:"center"}}>
+                <Text style={{textAlign:"center", fontSize:40}}>
                   Followings
                   </Text>
-                <Text style={{ flexDirection:"row", marginLeft:"5%"}}>
+                <Text style={{ flexDirection:"row", marginLeft:"5%", marginTop:"5%", justifyContent:"space-around"}}>
                   {followings.map((followings, index) =>{
                     return(
-                      MymodalFollowing(followings)
+                      <Text>
+                      <Text style={{flexDirection: "row"}}>
+                      <TouchableOpacity >
+                        <Text style={{fontSize : 20}}>
+                      {followings.login}
+                        </Text>
+                      </TouchableOpacity>
+                         <Text>     
+                         </Text>
+                
+                       <Text>  
+                       <Text>   <TouchableOpacity style={{flexDirection:"row", borderWidth:2, backgroundColor:"green", justifyContent:"space-around"}} onPress={() => Follow(followings.login)}>
+                    <Text style={{backgroundColor:"green", justifyContent:"space-around", color:"white"}}> S'abonner</Text>
+                    </TouchableOpacity></Text>
+                        </Text>
+
+
+
+                        <Text>  <TouchableOpacity style={{flexDirection:"row", borderWidth:2, justifyContent:"space-around"}} onPress={() => UnFollow(followings.login)}>
+                        <Text style={{backgroundColor:"red", justifyContent:"space-around", color:"white"}}> Se désabonner</Text>
+
+                  </TouchableOpacity></Text>
+                     {"\n"}
+                     {"\n"}
+
+                      </Text>
+                
+                     
+                
+                      </Text>
                    )
                    
+
                   })}
                 </Text>
               </SafeAreaView>: null }
@@ -253,20 +269,22 @@ const User = ({octokit}) => {
           
       </View>
       </SafeAreaView>
+        </ScrollView>
         )
+
+        
     else{
-        return (
-            <View>
-                <Text>Chargement...</Text>
+      return (
+        <View style={{flex:1, alignItems:"center", justifyContent:"center"}}>
+                <ActivityIndicator />
             </View>
         )
-    }
+      }
 }
 
 
 
 
-// export default User
 
 const mapStateToProps = state => state;
 
@@ -338,7 +356,6 @@ const styles = StyleSheet.create({
 
 
  nametitle: {
-   fontFamily: "Red Hat Display",
    fontStyle: "normal",
    color: "#120E21",
    fontSize:40,
