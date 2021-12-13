@@ -1,10 +1,17 @@
 import React,{useEffect, useState} from 'react'
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux';
 
-const UserDetail = ({route, octokit}) => {
+const UserDetail = ({route, octokit, navigation}) => {
     const {data} = route.params;
     const [user, setuser] = useState(undefined)
+
+    const follow = async() => {
+        await octokit.request('PUT /user/following/{username}', {
+        username: data.login
+          })
+        }
+
 
     useEffect(() => {
         octokit.rest.users.getByUsername({
@@ -13,6 +20,17 @@ const UserDetail = ({route, octokit}) => {
             {
                 setuser(res.data)
             });
+
+            navigation.setOptions({headerRight: () => (
+                <TouchableOpacity
+                  onPress={follow}
+                >
+                  <Image
+                    source={require("../../Image/follow.jpeg")}
+                    style={{ width: 15, height: 15 }}
+                  />
+                </TouchableOpacity>
+              ),})
     }, [])
 
     if(user)
