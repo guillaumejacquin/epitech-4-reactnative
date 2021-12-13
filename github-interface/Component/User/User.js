@@ -6,6 +6,49 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
 
+const MymodalFollowing = (followings) => {
+    return(
+      <Text>
+      <Text style={{flexDirection: "row"}}>
+      <TouchableOpacity >
+        <Text>
+      {followings.login}
+        </Text>
+      </TouchableOpacity>
+         <Text>     
+         </Text>
+
+       <Text>  
+         <TouchableOpacity  onPress={() => Follow(followers.login)}>
+            <Text> S'abonner </Text>
+         </TouchableOpacity>
+        </Text>
+         
+         <Text onPress={() => UnFollow(followings.login)}>  
+         
+      <TouchableOpacity style={{flexDirection:"row", width:"30%", backgroundColor:"green"}}>
+         <Text> Se désabonner</Text>
+      </TouchableOpacity>
+         </Text>
+     {"\n"}
+      </Text>
+
+      <Text style={{flexDirection:"row"}}>
+        <Text style={{width:"50%", borderWidth:2, borderWidth:2}}> POUET</Text>
+        <Text style={{width:"50%", borderWidth:2}}> POUET</Text>
+        <Text style={{width:"50%"}}> POUET</Text>
+
+
+      </Text>
+      {"\n"}
+        {"\n"}
+
+      </Text>
+      )}
+
+
+
+
 
 const User = ({octokit}) => {
     const [user, setuser] = useState(undefined)
@@ -26,7 +69,27 @@ const User = ({octokit}) => {
       
       await octokit.request('DELETE /user/following/{username}', {
         username: people
-      }).then(response => console.log(response))
+      })  
+
+      }
+
+      const Test = async() => {
+        console.log("ahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
+        setModalOpen(false)
+ 
+      }
+
+
+
+      const checkisFollowing = async(fanfan) => {
+        console.log(fanfan, "is following?")
+
+        await octokit.request('GET /users/{username}/following/{target_user}', {
+          username: user.login,
+          target_user: fanfan
+        }).then(console.log(res))
+        return("1")
+ 
       }
 
     const Follow = async(people) => {
@@ -35,9 +98,12 @@ const User = ({octokit}) => {
       username: people
       })
       }
+
+  
       
     const isFollowed = async(people) => {
-      s
+      console.log("a")
+      return(3)
     }
     
     const getData = async() => {
@@ -47,14 +113,10 @@ const User = ({octokit}) => {
         username: data.login
       })
       setFollowers(myfollowers.data)
-
       const myfollowings = await octokit.request('GET /users/{username}/following', {
         username: data.login
       })
       setFollowings(myfollowings.data)
-
-      const getUserStarred = (octokit) => octokit.request('GET /user/starred');
-      octokit.request('GET /user/starred')
 
         const privater = data.owned_private_repos
         const publicc = data.public_repos
@@ -73,6 +135,7 @@ const User = ({octokit}) => {
         return (
             <SafeAreaView>
               <Modal visible={modalOpen} animationType='slide'>
+
                 {modalselector == "followers"?
                 <SafeAreaView>
                 <MaterialIcons
@@ -87,17 +150,19 @@ const User = ({octokit}) => {
                   <Text>
                   {followers.map((followers) =>{
                     return(
+                      
                      <Text>
-                     {console.log(followers.login)}
                    {followers.login}
                    <Text>
                     isFollowing?
                    </Text>
+                   {checkisFollowing(followers.login)}
+                   
+
 
                     <Text>  
                    <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => Follow(followers.login)}>
                 <Text> S'abonner</Text>
-                {/* onPress={() => console.log("ahhuhu")} */}
                   </TouchableOpacity>
                   </Text>
 
@@ -106,19 +171,20 @@ const User = ({octokit}) => {
                 <Text> Se désabonner</Text>
                   </TouchableOpacity>
                   </Text>
-
                    {"\n"}
                    </Text>)   
                   })}
                   </Text>
               </SafeAreaView>: null }
+
+              {/* MODAL SELECTOR */}
               {modalselector == "followings"?
                 <SafeAreaView>
                 <MaterialIcons
                 name='close'
                 style={styles.modalToggle}
                 size={24}
-                onPress={() => setModalOpen(false)}
+                onPress={() => Test()}
                 />
                 <Text style={{textAlign:"center"}}>
                   Followings
@@ -126,83 +192,44 @@ const User = ({octokit}) => {
                 <Text style={{ flexDirection:"row", marginLeft:"5%"}}>
                   {followings.map((followings, index) =>{
                     return(
-                     <Text style={{flexDirection: "row", backgroundColor:"red"}}>
-                   {followings.login}
-                    <Text>
-                    isFollowing?
-                   </Text>
-                    <Text>  
-                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => Follow(followers.login)}>
-                <Text> S'abonner</Text>
-                {/* onPress={() => console.log("ahhuhu")} */}
-                  </TouchableOpacity>
-                  </Text>
-
-                  <Text>  
-                   <TouchableOpacity style={{flexDirection:"row", borderWidth:2}} onPress={() => UnFollow(followings.login)}>
-                <Text> Se désabonner</Text>
-                {/* onPress={() => console.log("ahhuhu")} */}
-                  </TouchableOpacity>
-                  </Text>
-
-                  {"\n"}
-                   </Text>)
+                      MymodalFollowing(followings)
+                   )
+                   
                   })}
                 </Text>
               </SafeAreaView>: null }
                  </Modal>
-
-
-
-                 
               <View>
                 <View style={{flexDirection:"row", left:"40%", marginTop:30}}> 
               <Image style={{width:80, height:80}}source={{uri: user.avatar_url}} />
               <Text style={styles.nametitle}> {user.login}</Text>
-
               </View> 
-
+              {console.log("ah")}
               <View style={{flexDirection:"row"}}> 
 
               { user.twitter_username ? <Text style={styles.twitter2}>  @{user.twitter_username} </Text> : <Text style={styles.twitter2}>  @notdefined   </Text> }
               { user.name ? <Text style={styles.twitter2}>  Name: {user.name} </Text> : <Text style={styles.twitter2}>  no name provided </Text> }
               </View>
 
-
-{/* 
-              #element1 {display:inline-block;margin-right:10px;} 
-#element2 {display:inline-block;}  */}
               </View>
               <View style={{flexDirection:"row", marginTop:"2%"}}> 
-
-              <View style ={{ width:"30%", borderRadius:5, borderWidth:2}}>
-              
+              <View style ={{ width:"30%", borderRadius:5, borderWidth:2, backgroundColor: "white"}}>         
               { user.company ? <Text> Company : {user.company} </Text> : <Text>  no company provided </Text> }
-
               { user.email ? <Text> Email: {user.email} </Text> : <Text>  no email </Text> }
-
-
               </View>
 
-              <View style ={{ width:"30%", borderRadius:5, borderColor:"black", borderWidth:2, marginLeft: "3%"}}>
+              <View style ={{ width:"30%", borderRadius:5, borderColor:"black", borderWidth:2, marginLeft: "3%", backgroundColor: "white"}}>
 
               { user.blog ? <Text>  {user.blog} </Text> : <Text>  no blog </Text> }
               </View>
-              <View style ={{ width:"30%", borderRadius:5, borderWidth:2, marginLeft:"3%"}}>
+              <View style ={{ width:"30%", borderRadius:5, borderWidth:2, marginLeft:"3%", backgroundColor: "white"}}>
               { user.bio ? <Text>  {user.bio} </Text> : <Text>  no bio </Text> }
               </View>
-              </View>
-
-
-
-              <View>
               </View>
       <View>
      <TouchableOpacity onPress={() => openmodal("followers")}
         style={styles.button}>
-
                 <Text style={styles.textbutton}>Followers {user.followers}</Text>
-                {/* onPress={() => console.log("ahhuhu")} */}
       </TouchableOpacity>
       </View>
       <View>
@@ -236,6 +263,9 @@ const User = ({octokit}) => {
     }
 }
 
+
+
+
 // export default User
 
 const mapStateToProps = state => state;
@@ -264,6 +294,7 @@ const styles = StyleSheet.create({
     twitter2: {
           textAlign:'center',
           textAlignVertical:'center',
+
             },
 
             
