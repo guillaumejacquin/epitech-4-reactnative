@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity, Picker, TextInput, Alert } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity, TextInput, Alert } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 import { Buffer } from 'buffer';

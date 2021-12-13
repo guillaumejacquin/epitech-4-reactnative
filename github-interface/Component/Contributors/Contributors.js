@@ -4,16 +4,17 @@ import {
   Text,
   SafeAreaView,
   ScrollView,
+  Image,
   View,
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
 import { connect } from "react-redux";
 
-const Forks = ({ route, octokit }) => {
+const Contributors = ({ route, octokit }) => {
   const repo = route.params.repo;
   const [refreshing, setRefreshing] = useState(false);
-  const [forks, setForks] = useState([]);
+  const [contributors, setContributors] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const mounted = useRef(false);
@@ -21,7 +22,7 @@ const Forks = ({ route, octokit }) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setPage(1);
-    getForks(1).then(() => setRefreshing(false));
+    getContributors(1).then(() => setRefreshing(false));
   }, []);
 
   const isCloseToBottom = ({
@@ -36,11 +37,11 @@ const Forks = ({ route, octokit }) => {
     );
   };
 
-  const getForks = async (page = 1) => {
+  const getContributors = async (page = 1) => {
     if (loading) return;
     setLoading(true);
     await octokit
-      .request("GET /repos/{owner}/{repo}/forks", {
+      .request("GET /repos/{owner}/{repo}/contributors", {
         owner: repo.owner.login,
         repo: repo.name,
         page: page,
@@ -48,11 +49,11 @@ const Forks = ({ route, octokit }) => {
       .then((res) => {
         if (page > 1) {
           if (res.data[0]) {
-            setForks(forks.concat(res.data));
+            setContributors(contributors.concat(res.data));
             setPage(page);
           }
         } else {
-          setForks(res.data);
+          setContributors(res.data);
         }
         setLoading(false);
       })
@@ -63,7 +64,7 @@ const Forks = ({ route, octokit }) => {
 
   useEffect(() => {
     mounted.current = true;
-    getForks();
+    getContributors();
     return () => {
       mounted.current = false;
     };
@@ -75,31 +76,24 @@ const Forks = ({ route, octokit }) => {
         scrollEventThrottle={1000}
         onScroll={({ nativeEvent }) => {
           if (mounted.current && isCloseToBottom(nativeEvent))
-            getForks(page + 1);
+            getContributors(page + 1);
         }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <View style={{ flexDirection: "column", marginVertical: 15 }}>
-          {forks.map((fork, index) => (
+          {/* Repo list */}
+          {contributors.map((watcher, index) => (
             <View key={index} style={styles.statBar}>
-              <View>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode={"tail"}
-                  style={styles.cardTitle}
-                >
-                  {fork.owner.login}
-                </Text>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode={"tail"}
-                  style={styles.login}
-                >
-                  {fork.name}
-                </Text>
-              </View>
+              {watcher.avatar_url ? (
+                <Image
+                  marginLeft={10}
+                  source={{ uri: watcher.avatar_url }}
+                  style={{ width: 40, height: 40, borderRadius: 40 / 2 }}
+                />
+              ) : null}
+              <Text style={styles.cardTitle}>{watcher.login}</Text>
             </View>
           ))}
           <ActivityIndicator animating={loading} />
@@ -116,7 +110,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginVertical: 7,
     backgroundColor: "white",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     paddingVertical: 12,
     borderRadius: 10,
     shadowRadius: 10,
@@ -130,16 +124,11 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: "700",
-    marginLeft: 20,
-  },
-  login: {
-    fontSize: 20,
-    fontWeight: "400",
-    marginLeft: 20,
+    marginLeft: 10,
   },
 });
 
 const mapStateToProps = (state) => state;
 
 const connectComponent = connect(mapStateToProps, undefined);
-export default connectComponent(Forks);
+export default connectComponent(Contributors);

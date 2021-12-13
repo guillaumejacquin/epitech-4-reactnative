@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { Text, View, SafeAreaView, ScrollView, TouchableOpacity, StyleSheet, TextInput} from 'react-native'
 import { connect } from 'react-redux'
-import { Icon } from 'react-native-elements';
+import { CommonActions } from '@react-navigation/native';
 
 const postComment = ({octokit, navigation, route}) => {
     const issue = route.params.issue;
@@ -14,7 +14,7 @@ const postComment = ({octokit, navigation, route}) => {
             issue_number: issue.number,
             body: comment,
         }).then(res =>
-            console.log(res.data))
+            navigation.dispatch(CommonActions.goBack()))
         .catch(error =>
                 console.log("an error occured", error)
         );

@@ -6,9 +6,10 @@ import {
   ScrollView,
   Image,
   View,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 } from "react-native";
-import { Input, Button, Icon } from "react-native-elements";
+import { CommonActions } from '@react-navigation/native';
 import { connect } from "react-redux";
 
 const Issue = ({ route, navigation, octokit }) => {
@@ -28,7 +29,7 @@ const Issue = ({ route, navigation, octokit }) => {
         issue_number: issue.number,
         state: issue.state === "closed" ? "open" : "closed"
     }).then(res =>
-        console.log(res)
+        navigation.dispatch(CommonActions.goBack())
         ).catch(error => {
             console.log("An error occured: ", error)
         });
@@ -142,14 +143,30 @@ const Issue = ({ route, navigation, octokit }) => {
             </Text>
             </View>
         ))}
-        <Button 
-        onPress={() => {navigation.navigate("postComment", {issue: issue})}}
-        title="Comment" type="outline" />
-        <Button onPress={() => {
-            closeIssue()
-        }} title =
-        { issue.state === "open" ? "Close Issue" : "Reopen Issue"}
-        />
+        <View style={{ marginVertical: 10 }}>
+            <TouchableOpacity
+                onPress={() => {navigation.navigate("postComment", {issue: issue})}}
+              >
+              <View style={styles.commentView}>
+                <Text style={styles.closeTitle}>Comment</Text>
+              </View>
+            </TouchableOpacity>
+        </View>
+
+        {issue.repository ?
+        <View style={{ marginVertical: 10 }}>
+            <TouchableOpacity
+              onPress={() => {
+                closeIssue()
+              }}
+            >
+              <View style={styles.closeView}>
+                <Text style={styles.closeTitle}>{issue.state == "open" ? "Close" : "Open"} pull request</Text>
+              </View>
+            </TouchableOpacity>
+        </View>
+      : null}
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -184,6 +201,40 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 10,
     borderRadius: 10,
+  },
+  closeView: {
+    alignItems: "center",
+    marginHorizontal: 60,
+    paddingVertical: 12,
+    backgroundColor: "blue",
+    borderRadius: 10,
+    shadowRadius: 10,
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+  },
+  commentView: {
+    alignItems: "center",
+    marginHorizontal: 60,
+    paddingVertical: 12,
+    backgroundColor: "green",
+    borderRadius: 10,
+    shadowRadius: 10,
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+  },
+  closeTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
+    color: "white",
   },
 });
 const mapStateToProps = (state) => state;
