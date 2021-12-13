@@ -103,7 +103,7 @@ const Issue = ({ route, navigation, octokit }) => {
           </View>
         </View>
         <Button 
-        onPress={() => {navigation.navigate("Comments", {issue: issue})}}
+        onPress={() => {navigation.navigate("Comment", {issue: issue})}}
         title="Comment" type="outline" />
         <Button onPress={() => {
             closeIssue()

@@ -3,27 +3,44 @@ import { Text, View, SafeAreaView, ScrollView, TouchableOpacity, StyleSheet} fro
 import { connect } from 'react-redux'
 import { Icon } from 'react-native-elements';
 
-const Comments = ({octokit, navigation, route}) => {
-        //console.log(issue.number)
-    //const data = issue.comments_url;
-    //console.log("TESTTTT",data)
-    //        await octokit.rest.issues.listComments({
-    //        owner: issue.owner.login,
-    //        repo: issue.repository.name,
-    //        issue_number: issue.number,
-    //      }).then(res =>
-    //        setComments(res))
-    //        .catch(error =>
-    //            console.log("an error occured", error)
-    //        );
+const Comment = ({octokit, navigation, route}) => {
+    const issue = route.params.issue;
+    const [comments, setComments] = useState([]);
+
+    const getComments = async() => {
+        await octokit.rest.issues.listComments({
+            owner: issue.repository.owner.login,
+            repo: issue.repository.name,
+            issue_number: issue.number,
+        }).then(res =>
+            setComments(res.data))
+        .catch(error =>
+                console.log("an error occured", error)
+        );
+    }
+
+    useEffect(() => {
+        getComments()
+    }, [octokit])
+
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
           <ScrollView>
-              <View style={{flexDirection: "column", marginVertical: 10}}>
+                <View style={{flexDirection: "column", marginVertical: 10}}>
                     <Text style={styles.title}>
                         Comments
                     </Text>
+                </View>
+                {comments.map((comment, index) => (
+                    <TouchableOpacity key={index} onPress={() => {navigation.navigate("postComment", {issue: issue})}}>
+                    <View key={index} style={styles.statBar}>
+                    <Text style={styles.cardTitle}>
+                         {comment.body}
+                    </Text>
                     </View>
+                </TouchableOpacity>
+                    ))
+                }
             </ScrollView>
         </SafeAreaView>
     )
@@ -32,7 +49,7 @@ const Comments = ({octokit, navigation, route}) => {
 const mapStateToProps = (state) => state;
 
 const connectComponent = connect(mapStateToProps, undefined);
-export default connectComponent(Comments);
+export default connectComponent(Comment);
 
 const styles = StyleSheet.create({
     statBar: {
