@@ -72,7 +72,7 @@ const Search = ({navigation, octokit}) => {
     const search_user = () => {
             octokit.rest.search.users({
                 q: input,
-            }).then(res =>{
+            }).then(res => {
                 setuser(res.data.items);
                 // console.log(res.data.items);
             })
@@ -116,7 +116,7 @@ const Search = ({navigation, octokit}) => {
                     input ? 
                     <View>
                         <Card title={"Repositories"} data={repositories} nav={navRepository} navAllFile={() => {navigation.navigate("Repositories", {input: input})}}/>
-                        <Card title={"Users"} data={user} nav={navUser} navAllFile={navAllFile}/>
+                        <Card title={"Users"} data={user} nav={navUser} navAllFile={() => {navigation.navigate("Users", {input: input})}}/>
                         <Card title={"Issues"} data={issues} nav={nav} navAllFile={navAllFile}/>
                     </View> :  <View style={{alignItems:"center", justifyContent:"center", flex:1}}>
                         <Text>Please perform a search ...</Text>

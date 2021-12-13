@@ -21,6 +21,7 @@ import PullRequest from '../PullRequest/PullRequest';
 import CreatePullRequest from '../CreatePullRequest/CreatePullRequest';
 import Contributors from '../Contributors/Contributors';
 import CreateIssue from '../CreateIssue/CreateIssue';
+import Users from '../Users/Users';
 import Watchers from '../Watchers/Watchers';
 import Forks from '../Forks/Forks';
 import { connect } from 'react-redux';
@@ -50,6 +51,7 @@ const SearchScreen = () => {
         <Stack.Screen name="Repositories" component={Repositories} options={options}/>
         <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
         <Stack.Screen name="UserDetail" component={UserDetail} options={options}/>
+        <Stack.Screen name="Users" component={Users} options={options}/>
       </Stack.Navigator>
     )
 }
