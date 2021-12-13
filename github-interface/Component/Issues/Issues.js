@@ -1,5 +1,5 @@
 import { ExecutionEnvironment } from "expo-constants";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,22 +10,43 @@ import {
   View,
   TouchableOpacity,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { connect } from "react-redux";
 
 const Issues = ({ route, navigation, octokit }) => {
   const repo = route.params?.repo;
+  const input = route.params?.input;
+  const [issues, setIssues] = useState([]);
   const [openIssues, setOpenIssues] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [closedIssues, setClosedIssues] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const mounted = useRef(false);
+
+  const isCloseToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }) => {
+    const paddingToBottom = 20;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
+  };
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getIssues().then(() => setRefreshing(false));
+    setPage(1);
+    getIssues(1).then(() => setRefreshing(false));
   }, []);
 
-  const getIssues = async () => {
+  const getIssues = async (page = 1) => {
+    if (loading) return;
+    setLoading(true);
     if (repo) {
       await octokit
         .request("GET /repos/{owner}/{repo}/issues", {
@@ -35,10 +56,16 @@ const Issues = ({ route, navigation, octokit }) => {
           filter: "all",
         })
         .then((res) => {
-          setOpenIssues(res.data);
+          if (page > 1) {
+            setOpenIssues(openIssues.concat(res.data));
+            setPage(page);
+          } else {
+            setOpenIssues(res.data);
+          }
+          setLoading(false);
         })
-        .catch((error) => {
-          console.log("an error occured: ", error);
+        .catch((err) => {
+          setLoading(false);
         });
       await octokit
         .request("GET /repos/{owner}/{repo}/issues", {
@@ -46,48 +73,99 @@ const Issues = ({ route, navigation, octokit }) => {
           repo: repo.name,
           state: "closed",
           filter: "all",
+          page: page,
         })
         .then((res) => {
-          setClosedIssues(res.data);
+          if (page > 1) {
+            setClosedIssues(closedIssues.concat(res.data));
+            setPage(page);
+          } else {
+            setClosedIssues(res.data);
+          }
+          setLoading(false);
         })
-        .catch((error) => {
-          console.log("an error occured: ", error);
+        .catch((err) => {
+          setLoading(false);
+        });
+    }
+    if (input) {
+      console.log(input);
+      await octokit
+        .request("GET /search/issues", {
+          q: input,
+          page: page,
+        })
+        .then((res) => {
+          console.log(res.data.items);
+          if (page > 1) {
+            setIssues(issues.concat(res.data.items));
+            setPage(page);
+          } else {
+            setIssues(res.data.items);
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          setLoading(false);
         });
     } else {
       await octokit
         .request("GET /issues", {
           state: "open",
           filter: "all",
+          page: page,
         })
         .then((res) => {
-          setOpenIssues(res.data);
+          if (page > 1) {
+            setOpenIssues(openIssues.concat(res.data));
+            setPage(page);
+          } else {
+            setOpenIssues(res.data);
+          }
+          setLoading(false);
         })
-        .catch((error) => {
-          console.log("an error occured: ", error);
+        .catch((err) => {
+          setLoading(false);
         });
       await octokit
         .request("GET /issues", {
           state: "closed",
           filter: "all",
+          page: page,
         })
         .then((res) => {
-          setClosedIssues(res.data);
+          if (page > 1) {
+            setClosedIssues(closedIssues.concat(res.data));
+            setPage(page);
+          } else {
+            setClosedIssues(res.data);
+          }
+          setLoading(false);
         })
-        .catch((error) => {
-          console.log("an error occured: ", error);
+        .catch((err) => {
+          setLoading(false);
         });
     }
   };
 
   useEffect(() => {
+    mounted.current = true;
     const unsubscribe = navigation.addListener("focus", () => {
       getIssues();
     });
+    return () => {
+      mounted.current = false;
+    };
   }, [navigation]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView
+        scrollEventThrottle={1000}
+        onScroll={({ nativeEvent }) => {
+          if (mounted.current && isCloseToBottom(nativeEvent))
+            getIssues(page + 1);
+        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -154,6 +232,27 @@ const Issues = ({ route, navigation, octokit }) => {
               ))}
             </View>
           ) : null}
+          {issues.length
+            ? issues.map((issue, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    navigation.navigate("Issue", { issue: issue });
+                  }}
+                >
+                  <View style={styles.statBar}>
+                    <Text style={styles.cardTitle}>{issue.title}</Text>
+                    <View style={{ alignItems: "center" }}>
+                      <Icon
+                        style={{ marginRight: 20, marginLeft: 10 }}
+                        name="arrow-right"
+                      />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))
+            : null}
+          <ActivityIndicator animating={loading} />
         </View>
       </ScrollView>
     </SafeAreaView>

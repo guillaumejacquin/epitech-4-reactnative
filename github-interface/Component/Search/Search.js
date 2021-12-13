@@ -4,50 +4,6 @@ import { connect } from 'react-redux'
 import Card from '../../ComponentScreen/SearchComponent/Card/Card'
 import Input from '../../ComponentScreen/SearchComponent/Input/Input'
 
-const DataRepositories = [
-    {
-        id:0,
-        name: "Repositories 1"
-    },
-    {
-        id:1,
-        name: "Repositories 2"
-    },
-    {
-        id:2,
-        name: "Repositories 3"
-    },
-]
-
-const DataUser = [
-    {
-        id:0,
-        name: "Lina"
-    },
-    {
-        id:1,
-        name: "Raphael"
-    },
-    {
-        id:2,
-        name: "Raphael"
-    },
-    {
-        id:3,
-        name: "Guillaume la daube"
-    },
-]
-
-const DataIssues = [
-    {
-        id:0,
-        name: "Issues 1"
-    },
-    {
-        id:1,
-        name: "Issues 2"
-    }
-]
 const Search = ({navigation, octokit}) => {
     const [input, setInput] = useState(undefined)
     const [user, setuser] = useState(undefined)
@@ -92,7 +48,7 @@ const Search = ({navigation, octokit}) => {
     }
 
     const search_issues = () => {
-        octokit.rest.search.issuesAndPullRequests({
+        octokit.request('GET /search/issues', {
             q:input,
         }).then(res =>{
             setissues(res.data.items)
@@ -117,7 +73,7 @@ const Search = ({navigation, octokit}) => {
                     <View>
                         <Card title={"Repositories"} data={repositories} nav={navRepository} navAllFile={() => {navigation.navigate("Repositories", {input: input})}}/>
                         <Card title={"Users"} data={user} nav={navUser} navAllFile={() => {navigation.navigate("Users", {input: input})}}/>
-                        <Card title={"Issues"} data={issues} nav={nav} navAllFile={navAllFile}/>
+                        <Card title={"Issues"} data={issues} nav={nav} navAllFile={() => {navigation.navigate("Issues", {input: input})}}/>
                     </View> :  <View style={{alignItems:"center", justifyContent:"center", flex:1}}>
                         <Text>Please perform a search ...</Text>
                     </View>
