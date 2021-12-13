@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity, RefreshControl } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ScrollView, StatusBar, Image, View, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux'
 
@@ -9,18 +9,34 @@ const Forks = ({route, navigation, octokit}) => {
 
     const [refreshing, setRefreshing] = useState(false);
     const [forks, setForks] = useState([]);
+    const [page, setPage] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         getForks().then(() => setRefreshing(false));
       }, []);
 
-    const getForks = async () => {
+    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+        const paddingToBottom = 20;
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+    };
+
+    const getForks = async (page = 0) => {
+        setLoading(true)
         await octokit.request('GET /repos/{owner}/{repo}/forks', {
             owner: repo.owner.login,
             repo: repo.name,
+            page: page
           }).then(res => {
-              setForks(res.data)
+              if (page) {
+                setForks(forks.concat(res.data))
+              } else {
+                setForks(res.data)
+              }
+              setLoading(false)
+          }).catch(err => {
+            setLoading(false)
           })
     }
     useEffect(() => {
@@ -29,7 +45,13 @@ const Forks = ({route, navigation, octokit}) => {
     
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
-          <ScrollView refreshControl={
+          <ScrollView 
+            onScroll={({nativeEvent}) => {
+            if (isCloseToBottom(nativeEvent))
+                getForks(page + 1)
+                setPage(page + 1)
+            }}
+          refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
@@ -49,6 +71,8 @@ const Forks = ({route, navigation, octokit}) => {
                         </View>
                     </View>
                   ))}
+
+              <ActivityIndicator animating={loading}/>
 
               </View>
           </ScrollView>
