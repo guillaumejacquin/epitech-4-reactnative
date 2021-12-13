@@ -89,7 +89,7 @@ const Users = ({ route, navigation, octokit }) => {
             <TouchableOpacity
               key={index}
               onPress={() => {
-                navigation.navigate("User", { user: user });
+                navigation.navigate("UserDetail", {data: user});
               }}
             >
               <View style={styles.statBar}>
