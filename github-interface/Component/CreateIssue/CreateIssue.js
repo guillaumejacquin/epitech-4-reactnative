@@ -1,24 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, SafeAreaView, ScrollView, Image, View, TouchableOpacity, Picker, TextInput, Alert } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { StyleSheet, Text, SafeAreaView, ScrollView, View, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { connect } from 'react-redux'
-import { Buffer } from 'buffer';
 import { CommonActions } from '@react-navigation/native';
 
 
 
 const CreateIssue = ({route, navigation, octokit}) => {
     const repo = route.params.repo
-    const [branches, setBranches] = useState([]);
-    const [pullRequest, setPullRequest] = useState([])
     const [title, setTitle] = useState('')
     const [body, setBody] = useState('')
-
-    useEffect(() => {
-
-    }, [])
-
-
 
     const createIssue = async () => {
         await octokit.request('POST /repos/{owner}/{repo}/issues', {

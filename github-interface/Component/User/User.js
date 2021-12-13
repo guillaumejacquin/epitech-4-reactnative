@@ -304,10 +304,7 @@ const styles = StyleSheet.create({
 
 
 },
-
-
  nametitle: {
-   fontFamily: "Red Hat Display",
    fontStyle: "normal",
    color: "#120E21",
    fontSize:40,

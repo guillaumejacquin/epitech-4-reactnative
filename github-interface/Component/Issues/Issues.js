@@ -27,7 +27,6 @@ const Issues = ({ route, navigation, octokit }) => {
 
   const getIssues = async () => {
     if (repo) {
-        console.log("repo")
       await octokit
         .request("GET /repos/{owner}/{repo}/issues", {
           owner: repo.owner.login,
@@ -55,7 +54,6 @@ const Issues = ({ route, navigation, octokit }) => {
           console.log("an error occured: ", error);
         });
     } else {
-        console.log("no repo")
       await octokit
         .request("GET /issues", {
           state: "open",
@@ -83,7 +81,7 @@ const Issues = ({ route, navigation, octokit }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      getIssues()
+      getIssues();
     });
   }, [navigation]);
 
