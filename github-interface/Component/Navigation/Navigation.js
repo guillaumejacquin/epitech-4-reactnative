@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import * as Types from '../../store/type'
 import SplashScreen from '../Splash/SplashScreen';
 import CreateRepo from '../CreateRepo/CreateRepo';
+import UserDetail from '../User/UserDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,7 @@ const SearchScreen = () => {
         <Stack.Screen name="Contributors" component={Contributors} options={options}/>
         <Stack.Screen name="Repositories" component={Repositories} options={options}/>
         <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
+        <Stack.Screen name="UserDetail" component={UserDetail} options={options}/>
       </Stack.Navigator>
     )
 }

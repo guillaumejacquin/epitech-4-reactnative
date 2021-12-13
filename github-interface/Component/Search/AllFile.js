@@ -6,8 +6,14 @@ const AllFile = ({route, navigation}) => {
     const data = route.params.data;
     const name = route.params.name;
 
-    const nav= () => {
-        navigation.navigate("Details")
+    const nav= (data) => {
+        if(name === "Issues")
+            navigation.navigate("Details", {data})
+        else if (name === "Repositories")
+            navigation.navigate("RepositoryView", {repo: data})
+        else if (name === "Users")
+            navigation.navigate("UserDetail", {data})
+
     }
     return (
         <ScrollView>
