@@ -13,3 +13,4 @@ yarn.lock
 .env
 # macOS
 .DS_Store
+Component/Api/

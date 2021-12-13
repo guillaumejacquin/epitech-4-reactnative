@@ -13,9 +13,9 @@ import {
 import { Icon } from "react-native-elements";
 import { connect } from "react-redux";
 
-const Repositories = ({ route, navigation, octokit }) => {
+const Users = ({ route, navigation, octokit }) => {
   const input = route.params?.input;
-  const [repositories, setRepositories] = useState([]);
+  const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ const Repositories = ({ route, navigation, octokit }) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setPage(1);
-    getRepos(1).then(() => setRefreshing(false));
+    getUsers(1).then(() => setRefreshing(false));
   }, []);
 
   const isCloseToBottom = ({
@@ -41,71 +41,34 @@ const Repositories = ({ route, navigation, octokit }) => {
 
   useEffect(() => {
     mounted.current = true;
-    if (!input) {
-      navigation.setOptions({
-        headerRight: () => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Createrepo");
-            }}
-          >
-            <Image
-              source={require("../../Image/plus.png")}
-              style={{ width: 15, height: 15 }}
-            />
-          </TouchableOpacity>
-        ),
-      });
-    }
     const unsubscribe = navigation.addListener("focus", () => {
-      getRepos();
+      getUsers();
     });
     return () => {
       mounted.current = false;
     };
   }, [navigation]);
 
-  const getRepos = async (page = 1) => {
+  const getUsers = async (page = 1) => {
     if (loading) return;
     setLoading(true);
-    if (input) {
-      octokit.rest.search
-        .repos({
-          q: input,
-          page: page,
-        })
-        .then((res) => {
-          if (page > 1) {
-            setRepositories(repositories.concat(res.data.items));
-            setPage(page);
-          } else {
-            setRepositories(res.data.items);
-          }
-          setLoading(false);
-        })
-        .catch((err) => {
-          setLoading(false);
-        });
-    } else {
-      await octokit
-        .request("GET /user/repos", {
-          page: page,
-        })
-        .then((res) => {
-          if (page > 1) {
-            if (res.data[0]) {
-              setRepositories(repositories.concat(res.data));
-              setPage(page);
-            }
-          } else {
-            setRepositories(res.data);
-          }
-          setLoading(false);
-        })
-        .catch((err) => {
-          setLoading(false);
-        });
-    }
+    octokit.rest.search
+      .users({
+        q: input,
+        page: page,
+      })
+      .then((res) => {
+        if (page > 1) {
+          setUsers(users.concat(res.data.items));
+          setPage(page);
+        } else {
+          setUsers(res.data.items);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -114,7 +77,7 @@ const Repositories = ({ route, navigation, octokit }) => {
         scrollEventThrottle={1000}
         onScroll={({ nativeEvent }) => {
           if (mounted.current && isCloseToBottom(nativeEvent))
-            getRepos(page + 1);
+            getUsers(page + 1);
         }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -122,15 +85,15 @@ const Repositories = ({ route, navigation, octokit }) => {
       >
         <View style={{ flexDirection: "column", marginVertical: 15 }}>
           {/* Repo list */}
-          {repositories.map((repo, index) => (
+          {users.map((user, index) => (
             <TouchableOpacity
               key={index}
               onPress={() => {
-                navigation.navigate("Repository", { repo: repo });
+                navigation.navigate("UserDetail", {data: user});
               }}
             >
               <View style={styles.statBar}>
-                <Text style={styles.cardTitle}>{repo.name}</Text>
+                <Text style={styles.cardTitle}>{user.login}</Text>
                 <View style={{ alignItems: "center" }}>
                   <Icon
                     style={{ marginRight: 20, marginLeft: 10 }}
@@ -175,4 +138,4 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => state;
 
 const connectComponent = connect(mapStateToProps, undefined);
-export default connectComponent(Repositories);
+export default connectComponent(Users);

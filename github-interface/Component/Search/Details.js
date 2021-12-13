@@ -1,10 +1,12 @@
 import React from 'react'
 import { View, Text } from 'react-native'
+import IssuesScreen from '../Issues/IssuesScreen'
+import Repository from '../Repository/Repository'
 
-const Details = () => {
+const Details = ({route}) => {
     return (
         <View>
-            <Text>Detail</Text>
+            <IssuesScreen data={route.params.data}/>
         </View>
     )
 }

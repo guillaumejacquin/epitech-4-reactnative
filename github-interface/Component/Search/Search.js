@@ -4,67 +4,33 @@ import { connect } from 'react-redux'
 import Card from '../../ComponentScreen/SearchComponent/Card/Card'
 import Input from '../../ComponentScreen/SearchComponent/Input/Input'
 
-const DataRepositories = [
-    {
-        id:0,
-        name: "Repositories 1"
-    },
-    {
-        id:1,
-        name: "Repositories 2"
-    },
-    {
-        id:2,
-        name: "Repositories 3"
-    },
-]
-
-const DataUser = [
-    {
-        id:0,
-        name: "Lina"
-    },
-    {
-        id:1,
-        name: "Raphael"
-    },
-    {
-        id:2,
-        name: "Raphael"
-    },
-    {
-        id:3,
-        name: "Guillaume la daube"
-    },
-]
-
-const DataIssues = [
-    {
-        id:0,
-        name: "Issues 1"
-    },
-    {
-        id:1,
-        name: "Issues 2"
-    }
-]
 const Search = ({navigation, octokit}) => {
     const [input, setInput] = useState(undefined)
     const [user, setuser] = useState(undefined)
     const [repositories, setrepositories] = useState(undefined)
     const [issues, setissues] = useState([])
-    const nav= () => {
-        navigation.navigate("Details")
+    const nav= (data) => {
+        // navigation.navigate("Details", {data})
+        console.log(data)
+        navigation.navigate("Issue", { issue: data });
+    }
+
+    const navRepository = (data) => {
+        navigation.navigate("Repository", {repo: data})
+    }
+
+    const navUser = (data) => {
+        navigation.navigate("UserDetail", {data})
     }
     
-    const navAllFile= (data) => {
-        navigation.navigate("AllFile", {data})
+    const navAllFile= (data, name) => {
+        navigation.navigate("AllFile", {data, name})
     }
 
     const search_user = () => {
             octokit.rest.search.users({
                 q: input,
-            }).then(res =>{
+            }).then(res => {
                 setuser(res.data.items);
                 // console.log(res.data.items);
             })
@@ -77,7 +43,6 @@ const Search = ({navigation, octokit}) => {
         octokit.rest.search.repos({
             q:input,
         }).then(res =>{
-            console.log(res.data.items);
             setrepositories(res.data.items);
         }).catch(e => {
             console.log(e);
@@ -85,7 +50,7 @@ const Search = ({navigation, octokit}) => {
     }
 
     const search_issues = () => {
-        octokit.rest.search.issuesAndPullRequests({
+        octokit.request('GET /search/issues', {
             q:input,
         }).then(res =>{
             setissues(res.data.items)
@@ -108,11 +73,11 @@ const Search = ({navigation, octokit}) => {
                 {
                     input ? 
                     <View>
-                        <Card title={"Repositories"} data={repositories} nav={nav} navAllFile={navAllFile}/>
-                        <Card title={"Users"} data={user} nav={nav} navAllFile={navAllFile}/>
-                        <Card title={"Issues"} data={issues} nav={nav} navAllFile={navAllFile}/>
+                        <Card title={"Repositories"} data={repositories} nav={navRepository} navAllFile={() => {navigation.navigate("Repositories", {input: input})}}/>
+                        <Card title={"Users"} data={user} nav={navUser} navAllFile={() => {navigation.navigate("Users", {input: input})}}/>
+                        <Card title={"Issues"} data={issues} nav={nav} navAllFile={() => {navigation.navigate("Issues", {input: input})}}/>
                     </View> :  <View style={{alignItems:"center", justifyContent:"center", flex:1}}>
-                        <Text>Veuillez éffectuer une recherche ...</Text>
+                        <Text>Please perform a search ...</Text>
                     </View>
                 }
             </ScrollView>

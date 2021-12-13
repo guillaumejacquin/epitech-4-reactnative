@@ -6,7 +6,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
 
-
 const User = ({octokit}) => {
     const [user, setuser] = useState(undefined)
     const [modalOpen, setModalOpen] = useState(false);

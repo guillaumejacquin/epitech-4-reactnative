@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import Issue from '../Issues/Issue';
 import Search from '../Search/Search';
 import User from '../User/User';
 import Favorite from '../Favorite/Favorite';
@@ -13,14 +14,27 @@ import Details from '../Search/Details';
 import AllFile from '../Search/AllFile';
 import Repositories from '../Repositories/Repositories';
 import FileViewer from '../FileViewer/FileViewer';
-import Organizations from '../Organizations/Organizations';
+import Issues from '../Issues/Issues';
 import Home from '../Home/Home';
+import PullRequests from '../PullRequests/PullRequests';
+import PullRequest from '../PullRequest/PullRequest';
+import CreatePullRequest from '../CreatePullRequest/CreatePullRequest';
+import Contributors from '../Contributors/Contributors';
+import CreateIssue from '../CreateIssue/CreateIssue';
+import Users from '../Users/Users';
+import Watchers from '../Watchers/Watchers';
+import Forks from '../Forks/Forks';
 import { connect } from 'react-redux';
 import * as Types from '../../store/type'
 import SplashScreen from '../Splash/SplashScreen';
+import CreateRepo from '../CreateRepo/CreateRepo';
+import Comment from '../Issues/Comment';
+import postComment from '../Issues/postComment';
+import UserDetail from '../User/UserDetail';
 
 const Stack = createNativeStackNavigator();
 
+const options = {headerBackTitle: "Back"}
 const UserScreen = () => {
     return(
     <Stack.Navigator>
@@ -32,8 +46,17 @@ const SearchScreen = () => {
     return(
     <Stack.Navigator>
         <Stack.Screen name="Search" component={Search} />
-        <Stack.Screen name="Details" component={Details} />
-        <Stack.Screen name="AllFile" component={AllFile} />
+        <Stack.Screen name="postComment" component={postComment} options={options}/>
+        <Stack.Screen name="Details" component={Details} options={options}/>
+        <Stack.Screen name="AllFile" component={AllFile} options={options}/>
+        <Stack.Screen name="Repository" component={Repository} options={options}/>
+        <Stack.Screen name="Contributors" component={Contributors} options={options}/>
+        <Stack.Screen name="Repositories" component={Repositories} options={options}/>
+        <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
+        <Stack.Screen name="UserDetail" component={UserDetail} options={options}/>
+        <Stack.Screen name="Issues" component={Issues} options={options}/>
+        <Stack.Screen name="Issue" component={Issue} options={options}/>
+        <Stack.Screen name="Users" component={Users} options={options}/>
       </Stack.Navigator>
     )
 }
@@ -41,22 +64,34 @@ const FavorisScreen = () => {
     return(
     <Stack.Navigator>
         <Stack.Screen name="Favoris" component={Favorite} />
+        <Stack.Screen name="Repository" component={Repository} options={options}/>
+        <Stack.Screen name="Contributors" component={Contributors} options={options}/>
+        <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
       </Stack.Navigator>
     )
 }
 const RepositoryScreen = () => {
     return(
-    <Stack.Navigator>
+    <Stack.Navigator >
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Organizations" component={Organizations} />
-        <Stack.Screen name="Repositories" component={Repositories} />
-        <Stack.Screen name="Repository" component={Repository} />
-        <Stack.Screen name="Repository browser" component={RepositoryBrowser} />
-        <Stack.Screen name="FileViewer" component={FileViewer} />
+        <Stack.Screen name="postComment" component={postComment} options={options}/>
+        <Stack.Screen name="Repositories" component={Repositories} options={options}/>
+        <Stack.Screen name="Issues" component={Issues} options={options}/>
+        <Stack.Screen name="Issue" component={Issue} options={options}/>
+        <Stack.Screen name="Repository" component={Repository} options={options}/>
+        <Stack.Screen name="Repository browser" component={RepositoryBrowser} options={options}/>
+        <Stack.Screen name="FileViewer" component={FileViewer} options={options}/>
+        <Stack.Screen name="Createrepo" component={CreateRepo} options={options}/>
+        <Stack.Screen name="Pull requests" component={PullRequests} options={options}/>
+        <Stack.Screen name="Pull request" component={PullRequest} options={options}/>
+        <Stack.Screen name="Create pull request" component={CreatePullRequest} options={options}/>
+        <Stack.Screen name="Watchers" component={Watchers} options={options}/>
+        <Stack.Screen name="Forks" component={Forks} options={options}/>
+        <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
+        <Stack.Screen name="Contributors" component={Contributors} options={options}/>
     </Stack.Navigator>
     )
 }
-
 
 const Tab = createBottomTabNavigator();
 
