@@ -215,17 +215,20 @@ const Repository = ({route, navigation, octokit}) => {
                             </View>
                         </View>
                     </TouchableOpacity>
-                    <View style={styles.statBar}>
-                            <Text style={styles.title}>
-                                Contributors
-                            </Text>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate("Contributors", {repo: repo})}}>
+
+                        <View style={styles.statBar}>
                                 <Text style={styles.title}>
-                                    {contributors}
+                                    Contributors
                                 </Text>
-                                <Icon style={{marginRight: 20, marginLeft: 10}} name='group' />
+                                <View style={{flexDirection: "row", alignItems: "center"}}>
+                                    <Text style={styles.title}>
+                                        {contributors}
+                                    </Text>
+                                    <Icon style={{marginRight: 20, marginLeft: 10}} name='group' />
+                                </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                   </View>
 
                   {readme ? 

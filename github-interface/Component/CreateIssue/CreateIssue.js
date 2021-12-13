@@ -11,45 +11,23 @@ const CreateIssue = ({route, navigation, octokit}) => {
     const repo = route.params.repo
     const [branches, setBranches] = useState([]);
     const [pullRequest, setPullRequest] = useState([])
-    const [selectHead, setSelectHead] = useState(false);
-    const [selectBase, setSelectBase] = useState(false);
-    const [head, setHead] = useState('')
-    const [base, setBase] = useState('')
     const [title, setTitle] = useState('')
+    const [body, setBody] = useState('')
 
     useEffect(() => {
-        getAllBranches()
+
     }, [])
 
-    const getAllBranches = async () => {
-        await octokit.request('GET /repos/{owner}/{repo}/branches', {
-          owner: repo.owner.login,
-          repo: repo.name,
-        }).then(res => {
-            res.data.push({name: ""})
-          setBranches(res.data)
-        })
-    }
 
-    const setHeadRefresh = (h) => {
-        setHead(h)
-        setSelectHead(false)
-    }
-
-    const setBaseRefresh = (b) => {
-        setBase(b)
-        setSelectBase(false)
-    }
 
     const createIssue = async () => {
-        await octokit.request('POST /repos/{owner}/{repo}/pulls', {
+        await octokit.request('POST /repos/{owner}/{repo}/issues', {
             owner: repo.owner.login,
             repo: repo.name,
-            head: head,
-            base: base,
-            title: title
+            title: title,
+            body: body,
           }).then(
-              navigation.dispatch(CommonActions.goBack())
+              navigation.dispatch(CommonActions.goBack({ repo: repo }))
             ).catch(err => {
                 Alert.alert(
                     "Error",
@@ -72,7 +50,7 @@ const CreateIssue = ({route, navigation, octokit}) => {
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
            
           <ScrollView>
-              <View style={{flexDirection: "column"}}>
+              <View style={{flexDirection: "column", marginTop: 10}}>
 
               <Text style={styles.inputTitle}>Title</Text>
 
@@ -80,57 +58,13 @@ const CreateIssue = ({route, navigation, octokit}) => {
                 <TextInput placeholder="Title" style={styles.input} onChangeText={(t) => setTitle(t)} value={title}/>
                 </View>
 
+                <Text style={styles.inputTitle}>Body</Text>
 
-              <Text style={styles.inputTitle}>Head</Text>
-
-              <TouchableOpacity onPress={() => {setSelectHead(!selectHead)}}>
-                <View style={styles.statBar}>
-                  <Text style={styles.title}>
-                      {head}
-                  </Text>
+              <View style={styles.statBar}>
+                <TextInput multiline placeholder="Body" style={styles.input} onChangeText={(t) => setBody(t)} value={body}/>
                 </View>
-              </TouchableOpacity>
-              {selectHead ? 
-                <Picker
-                    selectedValue={head}
-                    onValueChange={(itemValue, itemIndex) => setHeadRefresh(itemValue)}
-                    >
-                    {branches.map((b, index) => (
-                        base != b.name ? 
-                        <Picker.Item key={index} label={b.name} value={b.name} />
-                        : null
-                    ))}
-                    </Picker>
-                : null}
 
-                {/* <View style={{alignItems: "center"}}>
-                    <Icon style={{marginRight: 20, marginLeft: 10}} name='arrow-down' />
-                </View> */}
-
-                <Text style={styles.inputTitle}>Base</Text>
-
-                <TouchableOpacity onPress={() => {setSelectBase(!selectBase)}}>
-                    <View style={styles.statBar}>
-                        <Text style={styles.title}>
-                            {base}
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                {selectBase ? 
-                <Picker
-                    selectedValue={base}
-                    onValueChange={(itemValue, itemIndex) => setBaseRefresh(itemValue)}
-                    >
-                    {branches.map((b, index) => (
-                        head != b.name ?
-                        <Picker.Item key={index} label={b.name} value={b.name} />
-                        : null
-                    ))}
-                    </Picker>
-                : null}
-
-                {title && head && base ?
+                {title && body ?
                 
                 <TouchableOpacity onPress={() => {createIssue()}}>
                     <View style={styles.createView}>
@@ -170,7 +104,7 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     input: {
-        width: "100%",
+        width: "85%",
         fontSize: 15,
         fontWeight: "400",
         marginLeft: 20

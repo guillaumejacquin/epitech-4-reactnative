@@ -19,6 +19,8 @@ import Home from '../Home/Home';
 import PullRequests from '../PullRequests/PullRequests';
 import PullRequest from '../PullRequest/PullRequest';
 import CreatePullRequest from '../CreatePullRequest/CreatePullRequest';
+import Contributors from '../Contributors/Contributors';
+import CreateIssue from '../CreateIssue/CreateIssue';
 import Watchers from '../Watchers/Watchers';
 import Forks from '../Forks/Forks';
 import { connect } from 'react-redux';
@@ -43,6 +45,8 @@ const SearchScreen = () => {
         <Stack.Screen name="Details" component={Details} options={options}/>
         <Stack.Screen name="AllFile" component={AllFile} options={options}/>
         <Stack.Screen name="RepositoryView" component={Repository} options={options}/>
+        <Stack.Screen name="Contributors" component={Contributors} options={options}/>
+        <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
       </Stack.Navigator>
     )
 }
@@ -51,6 +55,8 @@ const FavorisScreen = () => {
     <Stack.Navigator>
         <Stack.Screen name="Favoris" component={Favorite} />
         <Stack.Screen name="Repository" component={Repository} options={options}/>
+        <Stack.Screen name="Contributors" component={Contributors} options={options}/>
+        <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
       </Stack.Navigator>
     )
 }
@@ -70,6 +76,8 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Create pull request" component={CreatePullRequest} options={options}/>
         <Stack.Screen name="Watchers" component={Watchers} options={options}/>
         <Stack.Screen name="Forks" component={Forks} options={options}/>
+        <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
+        <Stack.Screen name="Contributors" component={Contributors} options={options}/>
     </Stack.Navigator>
     )
 }

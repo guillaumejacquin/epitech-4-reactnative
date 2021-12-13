@@ -132,8 +132,30 @@ const Issue = ({ route, navigator, octokit }) => {
           />
           <Icon reserve name="sc-telegram" type="evilicon" color="#517fa4" />
         </View>
-        <Button title="Comment" type="outline" />
-        <Button onPress={() => {}} title="Close Issue" />
+
+        <View style={{ marginVertical: 10 }}>
+            <TouchableOpacity
+              onPress={() => {
+                closeIssue()
+              }}
+            >
+              <View style={styles.commentView}>
+                <Text style={styles.closeTitle}>Comment</Text>
+              </View>
+            </TouchableOpacity>
+        </View>
+
+        <View style={{ marginVertical: 10 }}>
+            <TouchableOpacity
+              onPress={() => {
+                closeIssue()
+              }}
+            >
+              <View style={styles.closeView}>
+                <Text style={styles.closeTitle}>{issue.state == "open" ? "Close" : "Open"} pull request</Text>
+              </View>
+            </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -165,6 +187,40 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 10,
     borderRadius: 10,
+  },
+  closeView: {
+    alignItems: "center",
+    marginHorizontal: 60,
+    paddingVertical: 12,
+    backgroundColor: "blue",
+    borderRadius: 10,
+    shadowRadius: 10,
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+  },
+  commentView: {
+    alignItems: "center",
+    marginHorizontal: 60,
+    paddingVertical: 12,
+    backgroundColor: "green",
+    borderRadius: 10,
+    shadowRadius: 10,
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+  },
+  closeTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
+    color: "white",
   },
 });
 const mapStateToProps = (state) => state;
