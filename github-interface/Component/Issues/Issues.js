@@ -89,14 +89,12 @@ const Issues = ({ route, navigation, octokit }) => {
         });
     }
     if (input) {
-      console.log(input);
       await octokit
         .request("GET /search/issues", {
           q: input,
           page: page,
         })
         .then((res) => {
-          console.log(res.data.items);
           if (page > 1) {
             setIssues(issues.concat(res.data.items));
             setPage(page);

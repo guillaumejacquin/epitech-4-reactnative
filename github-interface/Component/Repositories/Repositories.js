@@ -41,7 +41,7 @@ const Repositories = ({ route, navigation, octokit }) => {
 
   useEffect(() => {
     mounted.current = true;
-    if (input) {
+    if (!input) {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity
