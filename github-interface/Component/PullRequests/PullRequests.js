@@ -46,10 +46,10 @@ const PullRequests = ({ route, navigation, octokit }) => {
       })
       .then((res) => {
         if (page > 1) {
-          setPullRequestsOpen(pullRequestsOpen.concat(res.data));
+          setPullRequestsOpen(pullRequestsOpen.concat(res.data.items));
           setPage(page);
         } else {
-          setPullRequestsOpen(res.data);
+          setPullRequestsOpen(res.data.items);
         }
         setLoading(false);
       })
@@ -64,10 +64,10 @@ const PullRequests = ({ route, navigation, octokit }) => {
       })
       .then((res) => {
         if (page > 1) {
-          setPullRequestsClose(pullRequestsClose.concat(res.data));
+          setPullRequestsClose(pullRequestsClose.concat(res.data.items));
           setPage(page);
         } else {
-          setPullRequestsClose(res.data);
+          setPullRequestsClose(res.data.items);
         }
         setLoading(false);
       })
