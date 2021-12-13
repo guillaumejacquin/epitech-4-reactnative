@@ -7,20 +7,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 
 
-
-
-
-
 const User = ({octokit}) => {
     const [user, setuser] = useState(undefined)
     const [modalOpen, setModalOpen] = useState(false);
     const [modalselector, setModalSelector] = useState(null);
     const [followers,  setFollowers ] = useState([])
+    let isFollowers = []
     const [followings, setFollowings] = useState([])
     const [repo, setRepo] = useState(0)
     const [isSelected, setSelection] = useState(false);
-
-
     const [checkFollowingState, setCheckFollowingState] = useState([]);
 
 
@@ -38,12 +33,11 @@ const User = ({octokit}) => {
       }
 
       const Test = async() => {
-        console.log("ahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
         setModalOpen(false)
  
       }
 
-      const checkisFollowing = async(isuserfollowing) => {
+      const checkisFollowing = async(isuserfollowing, index) => {
         var mylog = 0
         try {
           await octokit.request('GET /users/{username}/following/{target_user}', {
@@ -53,15 +47,16 @@ const User = ({octokit}) => {
           
           if (mylog == 204) {
             setCheckFollowingState("You follow him")
+            isFollowers.push({following: true})
             console.log("following ", isuserfollowing, " nice ")
+          } else {
+            isFollowers.push({following: false})
           }
         }
        catch  {
           console.log("not following", isuserfollowing)
           setCheckFollowingState("You  don't follow him")
-
         } 
-        return(1)
       }
 
     const Follow = async(people) => {
@@ -75,13 +70,20 @@ const User = ({octokit}) => {
     const getData = async() => {
         const {data} = await octokit.request("/user");
 
-       const myfollowers = await octokit.request('GET /users/{username}/followers', {
+      await octokit.request('GET /users/{username}/followers', {
         username: data.login
+      }).then(res => {
+        setFollowers( res.data , () => {
+          res.data.map((follower, index) => {
+            checkisFollowing(follower.login, index)
+          })
+        })
       })
-      setFollowers(myfollowers.data)
+
       const myfollowings = await octokit.request('GET /users/{username}/following', {
         username: data.login
       })
+
       setFollowings(myfollowings.data)
 
         const privater = data.owned_private_repos
@@ -91,11 +93,14 @@ const User = ({octokit}) => {
       
         return data
     }
+
     useEffect(() => {
         getData().then(res => {
             setuser(res);
+            console.log(isFollowers)
         })
-    }, [octokit])
+    }, [])
+
     var test = "a";
     if(user)
         return (
@@ -115,27 +120,22 @@ const User = ({octokit}) => {
                 <Text style={{textAlign:"center", fontSize:40}}>
                   Followers
                   </Text>  
-
                   <Text style={{marginTop:"2%", justifyContent:"space-around", width:"100%", border:"solid"}}>
-                  {followers.map((followers, index) =>{
-                    {(test = (checkisFollowing(followers.login)))}
+                  {followers.map((follower, index) =>{
+                    
 
                     return(     
                      <Text>
                       <Text>  
                         <Text>
-                      {/* {console.log(checkFollowingState[index])} */}
+                        {/* {isFollowers.at(index).following ? "FOLLOW" : "NOT FOLLOW"} */}
                       </Text>
-                    
-             
                   </Text>
-
-                   
                    {"\n"}
                    <Text style={{flexDirection:"row", justifyContent:"space-around"}}>
                    
                    <Text>   <TouchableOpacity style={{flexDirection:"row", justifyContent:"space-around"}}>
-                    <Text style={{backgroundColor:"white", justifyContent:"space-around"}}> {followers.login}</Text>
+                    <Text style={{backgroundColor:"white", justifyContent:"space-around"}}> {follower.login}</Text>
                     </TouchableOpacity></Text>
 
                     <Text>   <TouchableOpacity style={{flexDirection:"row", justifyContent:"space-around"}}>
@@ -143,13 +143,13 @@ const User = ({octokit}) => {
                     </TouchableOpacity></Text>
 
 
-                    <Text>   <TouchableOpacity style={{flexDirection:"row", borderWidth:2, backgroundColor:"green", justifyContent:"space-around"}} onPress={() => Follow(followers.login)}>
+                    <Text>   <TouchableOpacity style={{flexDirection:"row", borderWidth:2, backgroundColor:"green", justifyContent:"space-around"}} onPress={() => Follow(follower.login)}>
                     <Text style={{backgroundColor:"green", justifyContent:"space-around", color:"white"}}> S'abonner</Text>
 
                     </TouchableOpacity></Text>
 
                     
-                        <Text>  <TouchableOpacity style={{flexDirection:"row", borderWidth:2, justifyContent:"space-around"}} onPress={() => UnFollow(followers.login)}>
+                        <Text>  <TouchableOpacity style={{flexDirection:"row", borderWidth:2, justifyContent:"space-around"}} onPress={() => UnFollow(follower.login)}>
                         <Text style={{backgroundColor:"red", justifyContent:"space-around", color:"white"}}> Se désabonner</Text>
 
                   </TouchableOpacity></Text>
@@ -202,15 +202,9 @@ const User = ({octokit}) => {
                   </TouchableOpacity></Text>
                      {"\n"}
                      {"\n"}
-
-                      </Text>
-                
-                     
-                
+                      </Text>           
                       </Text>
                    )
-                   
-
                   })}
                 </Text>
               </SafeAreaView>: null }
@@ -220,7 +214,6 @@ const User = ({octokit}) => {
               <Image style={{width:80, height:80}}source={{uri: user.avatar_url}} />
               <Text style={styles.nametitle}> {user.login}</Text>
               </View> 
-              {console.log("ah")}
               <View style={{flexDirection:"row"}}> 
 
               { user.twitter_username ? <Text style={styles.twitter2}>  @{user.twitter_username} </Text> : <Text style={styles.twitter2}>  @notdefined   </Text> }
