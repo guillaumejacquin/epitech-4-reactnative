@@ -52,6 +52,7 @@ const SearchScreen = () => {
         <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
         <Stack.Screen name="UserDetail" component={UserDetail} options={options}/>
         <Stack.Screen name="Issues" component={Issues} options={options}/>
+        <Stack.Screen name="Issue" component={Issue} options={options}/>
         <Stack.Screen name="Users" component={Users} options={options}/>
       </Stack.Navigator>
     )

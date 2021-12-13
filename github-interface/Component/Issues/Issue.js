@@ -145,6 +145,7 @@ const Issue = ({ route, navigator, octokit }) => {
             </TouchableOpacity>
         </View>
 
+        {issue.repository ?
         <View style={{ marginVertical: 10 }}>
             <TouchableOpacity
               onPress={() => {
@@ -156,6 +157,8 @@ const Issue = ({ route, navigator, octokit }) => {
               </View>
             </TouchableOpacity>
         </View>
+      : null}
+
       </ScrollView>
     </SafeAreaView>
   );

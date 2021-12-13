@@ -10,7 +10,9 @@ const Search = ({navigation, octokit}) => {
     const [repositories, setrepositories] = useState(undefined)
     const [issues, setissues] = useState([])
     const nav= (data) => {
-        navigation.navigate("Details", {data})
+        // navigation.navigate("Details", {data})
+        console.log(data)
+        navigation.navigate("Issue", { issue: data });
     }
 
     const navRepository = (data) => {
