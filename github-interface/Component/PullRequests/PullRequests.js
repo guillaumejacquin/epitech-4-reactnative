@@ -25,11 +25,15 @@ const PullRequests = ({ route, navigation, octokit }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
+      setPullRequestsOpen([]);
+      setPullRequestsClose([]);
       getPullRequests();
     });
   }, [navigation]);
 
   const onRefresh = React.useCallback(() => {
+    setPullRequestsClose([]);
+    setPullRequestsOpen([]);
     setRefreshing(true);
     setPage(1);
     getPullRequests(1).then(() => setRefreshing(false));
@@ -42,14 +46,17 @@ const PullRequests = ({ route, navigation, octokit }) => {
         owner: repo.owner.login,
         repo: repo.name,
         state: "open",
-        page: page
+        page: page,
       })
       .then((res) => {
         if (page > 1) {
-          setPullRequestsOpen(pullRequestsOpen.concat(res.data.items));
-          setPage(page);
+          if (res.data[0]) {
+            setPullRequestsOpen(pullRequestsOpen.concat(res.data));
+            setPage(page);
+          } else setPullRequestsOpen([]);
         } else {
-          setPullRequestsOpen(res.data.items);
+            console.log(res.data[0].state);
+            setPullRequestsOpen(res.data);
         }
         setLoading(false);
       })
@@ -64,10 +71,13 @@ const PullRequests = ({ route, navigation, octokit }) => {
       })
       .then((res) => {
         if (page > 1) {
-          setPullRequestsClose(pullRequestsClose.concat(res.data.items));
-          setPage(page);
+          if (res.data[0]) {
+            setPullRequestsClose(pullRequestsClose.concat(res.data));
+            setPage(page);
+          } else setPullRequestsClose([]);
         } else {
-          setPullRequestsClose(res.data.items);
+            console.log(res.data[0].state);
+            setPullRequestsClose(res.data);
         }
         setLoading(false);
       })
@@ -100,7 +110,7 @@ const PullRequests = ({ route, navigation, octokit }) => {
         <View style={{ flexDirection: "column" }}>
           {/* Stats */}
           <View style={{ marginVertical: 10 }}>
-            {pullRequestsOpen.length ? (
+            {pullRequestsOpen?.length ? (
               <View style={styles.statBar2}>
                 <View style={{ maxWidth: "70%" }}>
                   <Text style={styles.title}>Open</Text>
@@ -167,7 +177,7 @@ const PullRequests = ({ route, navigation, octokit }) => {
           </View>
 
           <View>
-            {pullRequestsClose.length ? (
+            {pullRequestsClose?.length ? (
               <View style={styles.statBar2}>
                 <View style={{ maxWidth: "70%" }}>
                   <Text style={styles.title}>Close</Text>

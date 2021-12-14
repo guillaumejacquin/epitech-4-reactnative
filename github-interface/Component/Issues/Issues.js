@@ -54,6 +54,7 @@ const Issues = ({ route, navigation, octokit }) => {
           repo: repo.name,
           state: "open",
           filter: "all",
+          page: page,
         })
         .then((res) => {
           if (page > 1) {
@@ -87,8 +88,7 @@ const Issues = ({ route, navigation, octokit }) => {
         .catch((err) => {
           setLoading(false);
         });
-    }
-    if (input) {
+    } else if (input) {
       await octokit
         .request("GET /search/issues", {
           q: input,
@@ -149,6 +149,7 @@ const Issues = ({ route, navigation, octokit }) => {
   useEffect(() => {
     mounted.current = true;
     const unsubscribe = navigation.addListener("focus", () => {
+      setIssues([]);
       getIssues();
     });
     return () => {
@@ -189,7 +190,9 @@ const Issues = ({ route, navigation, octokit }) => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    navigation.navigate("Issue", { issue: issue });
+                    if (!input)
+                      navigation.navigate("Issue", { issue: issue, repo: repo });
+                    else navigation.navigate("Details", { data: issue });
                   }}
                 >
                   <View style={styles.statBar}>
@@ -214,7 +217,9 @@ const Issues = ({ route, navigation, octokit }) => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    navigation.navigate("Issue", { issue: issue });
+                    if (!input)
+                      navigation.navigate("Issue", { issue: issue, repo: repo });
+                    else navigation.navigate("Details", { data: issue });
                   }}
                 >
                   <View style={styles.statBar}>
@@ -235,7 +240,9 @@ const Issues = ({ route, navigation, octokit }) => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    navigation.navigate("Issue", { issue: issue });
+                    if (!input)
+                      navigation.navigate("Issue", { issue: issue, repo: repo });
+                    else navigation.navigate("Details", { data: issue });
                   }}
                 >
                   <View style={styles.statBar}>
@@ -273,7 +280,7 @@ const styles = StyleSheet.create({
     shadowOffset: {
       width: 5,
       height: 5,
-    }
+    },
   },
   statBar2: {
     flexDirection: "column",
@@ -321,7 +328,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
     color: "white",
-  }
+  },
 });
 const mapStateToProps = (state) => state;
 

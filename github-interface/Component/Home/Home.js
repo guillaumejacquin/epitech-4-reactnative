@@ -25,7 +25,6 @@ function Home({navigation, octokit}) {
                     </Text>
                   <Card title={"My repositories"} navigation={navigation} navigate={"Repositories"}/>
                   <Card title={"My issues"} navigation={navigation} navigate={"Issues"}/>
-                  <Card title={"My pull requests"} navigation={navigation} navigate={"PullRequests"}/>
               </View>
           </ScrollView>
         </SafeAreaView>

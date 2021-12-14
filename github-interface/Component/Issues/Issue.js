@@ -7,13 +7,16 @@ import {
   Image,
   View,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  RefreshControl,
 } from "react-native";
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions } from "@react-navigation/native";
 import { connect } from "react-redux";
 
 const Issue = ({ route, navigation, octokit }) => {
+  const [refreshing, setRefreshing] = useState(false);
   const issue = route.params.issue;
+  const repo = route.params.repo;
 
   const description = () => {
     if (issue.body) {
@@ -22,17 +25,23 @@ const Issue = ({ route, navigation, octokit }) => {
     return "No description provided";
   };
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getComments().then(() => setRefreshing(false));
+  }, []);
+
   const closeIssue = async () => {
-    await octokit.request("PATCH /repos/{owner}/{repo}/issues/{issue_number}", {
-        owner: issue.repository.owner.login,
-        repo: issue.repository.name,
+    await octokit
+      .request("PATCH /repos/{owner}/{repo}/issues/{issue_number}", {
+        owner: repo ? repo.owner.login : issue.repository.owner.login,
+        repo: repo ? repo.name : issue.repository.name,
         issue_number: issue.number,
-        state: issue.state === "closed" ? "open" : "closed"
-    }).then(res =>
-        navigation.dispatch(CommonActions.goBack())
-        ).catch(error => {
-            console.log("An error occured: ", error)
-        });
+        state: issue.state === "closed" ? "open" : "closed",
+      })
+      .then((res) => navigation.dispatch(CommonActions.goBack()))
+      .catch((error) => {
+        console.log("An error occured: ", error);
+      });
   };
 
   const getAssignees = () => {
@@ -43,7 +52,8 @@ const Issue = ({ route, navigation, octokit }) => {
             source={{ uri: assignee.avatar_url }}
             style={{ width: 30, height: 30, borderRadius: 30 / 2 }}
           />
-        )): "";
+        ))
+      : "";
   };
 
   const openClosed = () => {
@@ -80,98 +90,104 @@ const Issue = ({ route, navigation, octokit }) => {
 
   const [comments, setComments] = useState([]);
 
-    const getComments = async() => {
-        await octokit.rest.issues.listComments({
-            owner: issue.repository.owner.login,
-            repo: issue.repository.name,
-            issue_number: issue.number,
-        }).then(res =>
-            setComments(res.data))
-        .catch(error =>
-                console.log("an error occured", error)
-        );
-  }
+  const getComments = async () => {
+    await octokit.rest.issues
+      .listComments({
+        owner: repo ? repo.owner.login : issue.repository.owner.login,
+        repo: repo ? repo.name : issue.repository.name,
+        issue_number: issue.number,
+      })
+      .then((res) => setComments(res.data))
+      .catch((error) => console.log("an error occured", error));
+  };
 
-    useEffect(() => {
-      getComments()
-  }, [octokit])
+  useEffect(() => {
+    getComments();
+  }, [octokit]);
 
   if (issue)
     return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView>
-        <View style={styles.body}>
-          <View
-            style={{
-              borderBottomWidth: 1,
-              padding: 15,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignContent: "center",
-            }}
-          >
-            <View style={{ width: "70%", height: "100%" }}>
-              <Text>{issue.title}</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <View style={styles.body}>
+            <View
+              style={{
+                borderBottomWidth: 1,
+                padding: 15,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignContent: "center",
+              }}
+            >
+              <View style={{ width: "70%", height: "100%" }}>
+                <Text>{issue.title}</Text>
+              </View>
+              {openClosed()}
             </View>
-            {openClosed()}
-          </View>
-          <View style={{ padding: 20, backgroundColor: "white" }}>
-            <Text>{description()}</Text>
-          </View>
-          <View style={{ borderTopWidth: 1, padding: 10 }}>
-            <Text>Assignees: </Text>
-            {getAssignees()}
-          </View>
-          <ScrollView>
-            <View style={{margin:10}}>
-                <Text>Created at: {(Date(issue.created_at)).split("G")[0]}</Text>
+            <View style={{ padding: 20, backgroundColor: "white" }}>
+              <Text>{description()}</Text>
+            </View>
+            <View style={{ borderTopWidth: 1, padding: 10 }}>
+              <Text>Assignees: </Text>
+              {getAssignees()}
+            </View>
+            <ScrollView>
+              <View style={{ margin: 10 }}>
+                <Text>Created at: {Date(issue.created_at).split("G")[0]}</Text>
                 <Text>Author: </Text>
                 <Image
-                  source={{ uri: issue.repository.owner.avatar_url }}
+                  source={{
+                    uri: repo
+                      ? repo.owner.avatar_url
+                      : issue.repository.owner.avatar_url,
+                  }}
                   style={{ width: 30, height: 30, borderRadius: 30 / 2 }}
                 />
-            </View>
-        </ScrollView>
-        </View>
-        <Text style={styles.title}>
-          Comments :
-        </Text>
-        {comments.map((comment, index) => (
+              </View>
+            </ScrollView>
+          </View>
+          <Text style={styles.title}>Comments :</Text>
+          {comments.map((comment, index) => (
             <View key={index} style={styles.statBar}>
-            <Text style={styles.cardTitle}>
-                  {comment.body}
-            </Text>
+              <Text style={styles.cardTitle}>{comment.body}</Text>
             </View>
-        ))}
-        <View style={{ marginVertical: 10 }}>
+          ))}
+          <View style={{ marginVertical: 10 }}>
             <TouchableOpacity
-                onPress={() => {navigation.navigate("postComment", {issue: issue})}}
-              >
+              onPress={() => {
+                navigation.navigate("postComment", { issue: issue });
+              }}
+            >
               <View style={styles.commentView}>
                 <Text style={styles.closeTitle}>Comment</Text>
               </View>
             </TouchableOpacity>
-        </View>
+          </View>
 
-        {issue.repository ?
-        <View style={{ marginVertical: 10 }}>
-            <TouchableOpacity
-              onPress={() => {
-                closeIssue()
-              }}
-            >
-              <View style={styles.closeView}>
-                <Text style={styles.closeTitle}>{issue.state == "open" ? "Close" : "Open"} pull request</Text>
-              </View>
-            </TouchableOpacity>
-        </View>
-      : null}
-
-      </ScrollView>
-    </SafeAreaView>
-  );
+          {issue.repository || repo ? (
+            <View style={{ marginVertical: 10 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  closeIssue();
+                }}
+              >
+                <View style={styles.closeView}>
+                  <Text style={styles.closeTitle}>
+                    {issue.state == "open" ? "Close" : "Open"} issue
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </ScrollView>
+      </SafeAreaView>
+    );
   else {
-    return <ActivityIndicator/>
+    return <ActivityIndicator />;
   }
 };
 

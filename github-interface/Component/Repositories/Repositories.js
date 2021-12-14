@@ -41,6 +41,9 @@ const Repositories = ({ route, navigation, octokit }) => {
 
   useEffect(() => {
     mounted.current = true;
+    const unsubscribe = navigation.addListener("focus", () => {
+      getRepos();
+    });
     if (!input) {
       navigation.setOptions({
         headerRight: () => (
@@ -57,9 +60,7 @@ const Repositories = ({ route, navigation, octokit }) => {
         ),
       });
     }
-    const unsubscribe = navigation.addListener("focus", () => {
-      getRepos();
-    });
+
     return () => {
       mounted.current = false;
     };

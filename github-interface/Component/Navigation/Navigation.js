@@ -57,6 +57,8 @@ const SearchScreen = () => {
         <Stack.Screen name="Issues" component={Issues} options={options}/>
         <Stack.Screen name="Issue" component={Issue} options={options}/>
         <Stack.Screen name="Users" component={Users} options={options}/>
+        <Stack.Screen name="Pull requests" component={PullRequests} options={options}/>
+        <Stack.Screen name="Pull request" component={PullRequest} options={options}/>
       </Stack.Navigator>
     )
 }
@@ -89,6 +91,7 @@ const RepositoryScreen = () => {
         <Stack.Screen name="Forks" component={Forks} options={options}/>
         <Stack.Screen name="Create issue" component={CreateIssue} options={options}/>
         <Stack.Screen name="Contributors" component={Contributors} options={options}/>
+        <Stack.Screen name="Details" component={Details} options={options}/>
     </Stack.Navigator>
     )
 }
